@@ -1,0 +1,27 @@
+{% extends 'uni/form_base.html' %}
+{% block title %}Reset Password{% endblock title %}
+
+
+{% block form_fields %}
+
+<div class="input-group no-border input-lg">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="now-ui-icons users_circle-08"></i>
+    </span>
+  </div>
+  <input type="text" class="form-control" placeholder="New Password...">
+</div>
+
+<div class="input-group no-border input-lg">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="now-ui-icons users_circle-08"></i>
+    </span>
+  </div>
+  <input type="text" class="form-control" placeholder="Confirm Password...">
+</div>
+
+{% endblock form_fields %}
+
+{% block submit_button_text %}Reset Password{% endblock submit_button_text %}

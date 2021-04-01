@@ -1,0 +1,72 @@
+{% extends 'uni/form_base.html' %}
+{% block title %}Sign up to The Symposium{% endblock title %}
+
+
+{% block form_fields %}
+
+<div class="input-group no-border input-lg">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="now-ui-icons users_circle-08"></i>
+    </span>
+  </div>
+  <input type="email" class="form-control" placeholder="Email...">
+</div>
+
+<div class="input-group no-border input-lg">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="now-ui-icons users_circle-08"></i>
+    </span>
+  </div>
+  <input type="text" class="form-control" placeholder="Username...">
+</div>
+
+<div class="row">
+  <div class="col-6">
+    <div class="input-group no-border input-lg">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="now-ui-icons users_circle-08"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" placeholder="First Name...">
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="input-group no-border input-lg">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="now-ui-icons users_circle-08"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" placeholder="Last Name...">
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-6">
+    <div class="input-group no-border input-lg">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="now-ui-icons users_circle-08"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" placeholder="Password...">
+    </div>
+  </div>
+  <div class="col-6">
+    <div class="input-group no-border input-lg">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="now-ui-icons users_circle-08"></i>
+        </span>
+      </div>
+      <input type="text" class="form-control" placeholder="Confirm password...">
+    </div>
+  </div>
+</div>
+{% endblock form_fields %}
+
+{% block submit_button_text %}Sign up{% endblock submit_button_text %}
