@@ -13,4 +13,5 @@ urlpatterns = [
          name='reset-link'),
     path('reset/', views.PasswordReset.as_view(), name='reset'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
+    path('profile/', views.Profile.as_view(), name='profile'),
 ]

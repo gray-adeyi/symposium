@@ -19,7 +19,7 @@ USER = get_user_model()
 
 
 class GTemplate(generic.TemplateView):
-    template_name = "uni/form_base.html"
+    template_name = "uni/icons.html"
 
 
 class Register(View):
