@@ -44,18 +44,18 @@ class RegisterForm(forms.Form):
         try:
             if field == 'username':
                 try:
-                    user = USER.objects.get(
+                    USER.objects.get(
                         username=self.cleaned_data[f'{field}'])
+                    self.add_error(f'{field}', forms.ValidationError(err_msg))
                 except USER.DoesNotExist:
                     pass
             elif field == 'email':
                 try:
-                    user = USER.objects.get(
+                    USER.objects.get(
                         email=self.cleaned_data[f'{field}'])
+                    self.add_error(f'{field}', forms.ValidationError(err_msg))
                 except USER.DoesNotExist:
                     pass
-
-            self.add_error(f'{field}', forms.ValidationError(err_msg))
         except Exception as e:
             raise(e)
 
@@ -113,10 +113,12 @@ class RegisterForm(forms.Form):
                              'Email is already attached to an existing \
                              account.')
 
-    def send_mail(self):
+    def send_mail(self, usr_obj):
+        link = self.create_student_data(usr_obj)
+        link = reverse('uni:activate', kwargs={'link': link})  # TODO: add hot
+        # before the link
         logger.info(f"Sending accout activation link to \
         {self.cleaned_data['email']}")
-        link = reverse('uni:activate')
 
         message = f"""
         Dear {self.cleaned_data['first_name']},
@@ -144,6 +146,18 @@ class RegisterForm(forms.Form):
             fail_silently=False,
             )
 
+    def create_student_data(self, usr_obj):
+        """
+        creates a `Student` model instance
+        and relates it to the created user
+        and returns the link needed for account
+        activation.
+        """
+        student_data = models.Student.objects.create(
+            basic_data=usr_obj,
+        )
+        return student_data.link
+
 
 class LoginForm(forms.Form):
     FIELDS = {
@@ -157,7 +171,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(max_length=50)
 
     def clean(self):
-        cleaned_data = super().clean()
+        super().clean()
         self.validate_user_exists()
 
     def validate_user_exists(self):

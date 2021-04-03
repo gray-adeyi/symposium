@@ -9,7 +9,10 @@ from django.contrib.auth import (
 from django.views import generic
 from django.views import View
 import logging
-from . import forms
+from . import (
+    forms,
+    models,
+    )
 
 logger = logging.getLogger(__name__)
 USER = get_user_model()
@@ -42,7 +45,7 @@ class Register(View):
             )
             user.set_password(new_user.cleaned_data['password'])
             user.save()
-            new_user.send_mail()
+            new_user.send_mail(user)
             messages.success(request, "Your accout was successfully set up, \
                             please activate your accout via the email we just\
                             sent to you.")
@@ -57,8 +60,12 @@ class Activate(View):
     Activates a newly created account.
     """
 
-    def get(self, request):
-        pass
+    def get(self, request, link):
+        student_data = models.Student.objects.get(link=link)
+        student_data.is_activated = True
+        student_data.save()
+        messages.success(request, "Your account has been activated.")
+        return HttpResponseRedirect(reverse('uni:dashboard'))
 
 
 class Login(View):
@@ -123,9 +130,32 @@ class ActivateAccount(generic.TemplateView):
     template_name = "uni/activate.html"
 
 
-class Dashboard(generic.TemplateView):
+class Dashboard(generic.View):
     """
     Renders user dashboard based on the
     supplied data.
     """
-    template_name = "uni/dashboard.html"
+    def __init__(self, *args, **kwargs):
+        self.template_name = "uni/dashboard.html"
+        self.ctx = {}
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return render(request, self.template_name, self.ctx)
+        else:
+            messages.error(request, "Your are required to login before \
+                accessing this page.")
+            return HttpResponseRedirect(reverse('uni:login'))
+
+
+class Profile(generic.View):
+    """
+    Holds logic for the user
+    profile page.
+    """
+    def __init__(self, *args, **kwargs):
+        self.template_name = "uni/profile.html"
+        self.ctx = {}
+
+    def get(self, request):
+        return render(request, self.template_name, self.ctx)

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+import secrets
 
 # Create your models here.
 USER = get_user_model()
@@ -58,9 +59,16 @@ class Student(models.Model):
                                     help_text='Flag to indicate that \
                                     the student is a class deputy')
     school_email = models.EmailField(blank=True)
+    is_activated = models.BooleanField(default=False)
+    link = models.SlugField(blank = True)
 
     def __str__(self):
         return self.basic_data.first_name
+
+    def save(self, *args, **kwargs):
+        if self.link is not None:
+            self.link = secrets.token_urlsafe(32)
+        super().save(*args, **kwargs)
 
 
 class StudentPhoneNumber(models.Model):
