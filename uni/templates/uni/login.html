@@ -1,17 +1,18 @@
 {% extends 'uni/form_base.html' %}
-{% block title %}Sign up to The Symposium{% endblock title %}
+{% block title %}Login to The Symposium{% endblock title %}
 
-
+{% block form_method %}POST{% endblock form_method %}
+{% block form_action %}{% url 'uni:login' %}{% endblock form_action %}
 {% block form_fields %}
 
-<span class="text-white"><marquee behavior="rtl">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</marquee></span>
+<span class="text-white"><marquee behavior="rtl">Please login with your email or username if you haven't updated your profile with a matric no or reg no.</marquee></span>
 <div class="input-group no-border input-lg">
   <div class="input-group-prepend">
     <span class="input-group-text">
       <i class="now-ui-icons users_circle-08"></i>
     </span>
   </div>
-  <input type="email" class="form-control" placeholder="Email/Matric No/Reg No...">
+  <input type="text" class="form-control" placeholder="Email/Username/Matric No/Reg No..." name="multi_field" value="{% if form.multi_field.value is not None %}{{ form.multi_field.value }}{% endif %}">
 </div>
 
 
@@ -21,7 +22,7 @@
       <i class="now-ui-icons users_circle-08"></i>
     </span>
   </div>
-  <input type="text" class="form-control" placeholder="Password...">
+  <input type="password" class="form-control" placeholder="Password..." name="password">
 </div>
 
 {% endblock form_fields %}

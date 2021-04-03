@@ -103,35 +103,49 @@
     <div class="page-header-image" style="background-image:url(../assets/img/login.jpg)"></div>
     <div class="content">
       <div class="container">
-        <div class="col-md-4 ml-auto mr-auto">
-          <div class="card card-login card-plain">
-            <form class="form" method="{% block form_method %}{% endblock form_method %}" action="{% block form_action %}{% endblock form_action %}">
-              <div class="card-header text-center">
-                <div class="logo-container">
-                  <img src="../assets/img/now-logo.png" alt="">
+        <div class="row">
+            {% for message in messages %}
+            <p class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        <div class="row">
+          <div class="col-md-4 ml-auto mr-auto">
+            <div class="card card-login card-plain">
+              <form class="form" method="{% block form_method %}{% endblock form_method %}" action="{% block form_action %}{% endblock form_action %}">
+                <div class="card-header text-center">
+                  <div class="logo-container">
+                    <img src="../assets/img/now-logo.png" alt="">
+                  </div>
                 </div>
+                <div class="card-body">
+                  {% csrf_token %}
+                  {% if form.errors %}<div class="alert alert-danger">{{ form.errors }}</div>{% endif %}
+                  {% block form_fields %}{% endblock form_fields %}
+                </div>
+                <div class="card-footer text-center">
+                  <button type="submit" class="btn btn-primary btn-round btn-lg btn-block">{% block submit_button_text %}{% endblock submit_button_text %}</button>
+                  <div class="pull-left">
+                    <h6>
+                      {% if not request.get_full_path == "/register/" %}
+                      <a href="{% url 'uni:register' %}" class="link">Create Account</a>
+                      {% else %}
+                      <a href="{% url 'uni:login' %}" class="link">Already have an account?</a>
+                      {% endif %}
+                    </h6>
+                  </div>
+                  <div class="pull-right">
+                    <h6>
+                      {% if request.get_full_path == '/login/' %}
+                      <a href="{% url 'uni:reset-link' %}" class="link">Forgot Password?</a>
+                      {% elif request.get_full_path == '/send-reset-link/' or request.get_full_path == '/reset/' %}
+                      <a href="{% url 'uni:login' %}" class="link">Return to login</a>
+                      {% endif %}
+                    </h6>
+                  </div>
+              </form>
               </div>
-              <div class="card-body">
-                {% block form_fields %}{% endblock form_fields %}
-              </div>
-              <div class="card-footer text-center">
-                <button type="submit" class="btn btn-primary btn-round btn-lg btn-block">{% block submit_button_text %}{% endblock submit_button_text %}</button>
-                <div class="pull-left">
-                  <h6>
-                    {% if request.url.get_full_path == "register" %}
-                    <p>hello</p>
-                    {% endif %}
-                    <a href="{% url 'uni:register' %}" class="link">Create Account</a>
-                  </h6>
-                </div>
-                <div class="pull-right">
-                  <h6>
-                    <a href="{% url 'uni:reset-link' %}" class="link">Forgot Password?</a>
-                  </h6>
-                </div>
-            </form>
             </div>
-          </div>
+        </div>
         </div>
       </div>
     </div>
