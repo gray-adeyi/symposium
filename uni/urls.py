@@ -12,6 +12,10 @@ urlpatterns = [
     path('send-reset-link/', views.SendPasswordReset.as_view(),
          name='reset-link'),
     path('reset/', views.PasswordReset.as_view(), name='reset'),
+    path('class-heads/authorize/',
+         views.LeaderAuthorization.as_view(), name='leader-authorize'),
+    path('class/create/', views.CreateSymposium.as_view(),
+         name='create-class'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
     path('profile/', views.Profile.as_view(), name='profile'),
 ]

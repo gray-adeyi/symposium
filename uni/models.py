@@ -18,6 +18,9 @@ class Faculty(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Falculties"
+
 
 class Lecturer(models.Model):
     """
@@ -35,9 +38,40 @@ class Department(models.Model):
     Model for all the Departments
     the university has.
     """
-    name = models.CharField(blank=True, max_length=100)
+    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE,
+                                related_name='departments')
+    name = models.CharField(max_length=100)
     about = models.TextField(blank=True)
-    HOD = models.ForeignKey(Lecturer, on_delete=models.SET_NULL, null=True)
+    HOD = models.ForeignKey(Lecturer, on_delete=models.SET_NULL, null=True,
+                            blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Symposium(models.Model):
+    """
+    Ignore it's unusual name. This
+    models is models the Class in which
+    all students belong to.
+
+    Notice: The class name `Symposium`
+    might be deprecated when a better name
+    comes along.
+    """
+    LEVEL_OPTIONS = (
+        ('100', '100 Level'),
+        ('200', '200 Level'),
+        ('300', '300 Level'),
+        ('400', '400 Level'),
+        ('500', '500 Level'),
+    )
+    department = models.ForeignKey(Department, on_delete=models.CASCADE,
+                                   related_name='classes')
+    name = models.CharField(max_length=100, unique=True)
+    level = models.CharField(max_length=3, choices=LEVEL_OPTIONS)
+    about = models.TextField(blank=True)
+    poster_image = models.ImageField(blank=True)
 
     def __str__(self):
         return self.name
@@ -48,8 +82,10 @@ class Student(models.Model):
     `Student` model represents each university student member
     and holds their data.
     """
-    basic_data = models.ForeignKey(USER, on_delete=models.CASCADE,
-                                   related_name='student_data')
+    member_of = models.ForeignKey(Symposium, on_delete=models.SET_NULL,
+                                  null=True, blank=True)
+    basic_data = models.OneToOneField(USER, on_delete=models.CASCADE,
+                                      related_name='student_data')
     matric_no = models.CharField(blank=True, max_length=10)
     reg_no = models.CharField(blank=True, max_length=10)
     is_governor = models.BooleanField(default=False,
@@ -60,7 +96,7 @@ class Student(models.Model):
                                     the student is a class deputy')
     school_email = models.EmailField(blank=True)
     is_activated = models.BooleanField(default=False)
-    link = models.SlugField(blank = True)
+    link = models.SlugField(blank=True)
 
     def __str__(self):
         return self.basic_data.first_name

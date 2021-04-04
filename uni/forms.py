@@ -306,3 +306,23 @@ class LoginForm(forms.Form):
                                     password=self.cleaned_data.get('password'))
             else:
                 return None
+
+
+class LeaderForm(forms.Form):
+    OPTIONS = (
+        ('n', 'Select Rank'),
+        ('d', 'Deputy'),
+        ('g', 'Governor'),
+    )
+    rank = forms.ChoiceField(choices=OPTIONS)
+
+
+class SymposiumForm(forms.ModelForm):
+    class Meta:
+        model = models.Symposium
+        fields = ['department',
+                  'name',
+                  'level',
+                  'about',
+                  'poster_image',
+                  ]

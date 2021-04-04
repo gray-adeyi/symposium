@@ -105,13 +105,25 @@
       <div class="container">
         <div class="row">
             {% for message in messages %}
-            <p class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}">{{ message }}</p>
+            <div class="alert {%if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}" role="alert">
+  <div class="container">
+    <div class="alert-icon">
+      <i class="now-ui-icons ui-2_like"></i>
+    </div>
+    <strong>{{ message.tags }}</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">
+        <i class="now-ui-icons ui-1_simple-remove"></i>
+      </span>
+    </button>
+  </div>
+</div>
             {% endfor %}
         </div>
         <div class="row">
           <div class="col-md-4 ml-auto mr-auto">
             <div class="card card-login card-plain">
-              <form class="form" method="{% block form_method %}{% endblock form_method %}" action="{% block form_action %}{% endblock form_action %}">
+              <form class="form" method="{% block form_method %}{% endblock form_method %}" action="{% block form_action %}{% endblock form_action %}" {% block form_extras %}{% endblock form_extras %}>
                 <div class="card-header text-center">
                   <div class="logo-container">
                     <img src="../assets/img/now-logo.png" alt="">

@@ -1,0 +1,62 @@
+{% extends 'uni/form_base.html' %}
+{% block title %}The Symposium Factory{% endblock title %}
+
+{% block form_method %}POST{% endblock form_method %}
+{% block form_action %}{% endblock form_action %}
+{% block form_extras %}enctype="multipart/form-data"{% endblock form_extras %}
+{% block form_fields %}
+<div class="alert alert-info" role="alert">
+  <div class="container">
+    <div class="alert-icon">
+      <i class="now-ui-icons travel_info"></i>
+    </div>
+    <strong>Notice!</strong> Class groups should only be created once by the
+    class governor, all other class members including the class deputy are required to join this class group.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">
+        <i class="now-ui-icons ui-1_simple-remove"></i>
+      </span>
+    </button>
+  </div>
+</div>
+<h3>Create Class Group</h3>
+
+<div class="form-group">
+    <label for="rank">Department</label>
+    <select class="form-control" id="rank" name="department">
+      {% for x, y in form.fields.department.choices %}
+      <option value="{{ x }}"{% if form.fields.department.value == x %} selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="input-group no-border input-lg">
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <i class="now-ui-icons travel_istanbul"></i>
+      </span>
+    </div>
+    <input type="text" class="form-control" placeholder="Class name..." name="name" value="{% if form.name.value is not None %}{{ form.name.value }}{% endif %}">
+  </div>
+
+  <div class="form-group">
+      <label for="rank">Level</label>
+      <select class="form-control" id="rank" name="level">
+        {% for x, y in form.fields.level.choices %}
+        <option value="{{ x }}"{% if form.fields.level.value == x %} selected{% endif %}>{{ y }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+  <div class="form-group">
+    <label for="about">About Class</label>
+    <textarea class="form-control" id="id_about" rows="1" name="about"></textarea>
+  </div>
+
+  <div>
+    <p><label for="id_poster_image">Poster image:</label> <input type="file" name="poster_image" accept="image/*" id="id_poster_image"></p>
+  </div>
+
+{% endblock form_fields %}
+
+{% block submit_button_text %}Create Class{% endblock submit_button_text %}

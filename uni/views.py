@@ -19,7 +19,7 @@ USER = get_user_model()
 
 
 class GTemplate(generic.TemplateView):
-    template_name = "uni/icons.html"
+    template_name = "uni/landing-page.html"
 
 
 class Register(View):
@@ -159,3 +159,71 @@ class Profile(generic.View):
 
     def get(self, request):
         return render(request, self.template_name, self.ctx)
+
+
+class LeaderAuthorization(generic.View):
+    """
+    This view authorizes Class Governors
+    and Deputites.
+
+    Note: Requires a better logic as it
+    does not restrain a regular user from
+    getting authorized as a class leader.
+    perhaps this view will be deprecated
+    in the future and class leaders will
+    have to contact the site admin directly.
+    """
+    def __init__(self, *args, **kwargs):
+        self.template_name = "uni/authorize.html"
+        self.ctx = {'form': forms.LeaderForm()}
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return render(request, self.template_name, self.ctx)
+        else:
+            messages.error(request, "You're required to login to \
+                access this page.")
+            return HttpResponseRedirect(reverse('uni:login'))
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            form = forms.LeaderForm(request.POST)
+            if form.is_valid():
+                rank = form.cleaned_data.get('rank', None)
+                if rank is not None:
+                    if rank == 'g':
+                        request.user.student_data.is_governor = True
+                        request.user.student_data.save()
+                        messages.success(request, "You have been authorized \
+                                         as a class governor.")
+                    elif rank == 'd':
+                        request.user.student_data.is_deputy = True
+                        request.user.student_data.save()
+                        messages.success(request, "You have been authorized \
+                        as a class deputy governor.")
+                    elif rank == 'n':
+                        pass
+                    return HttpResponseRedirect(reverse('uni:create-class'))
+        else:
+            messages.error(request, "You're required to login to \
+                access this page.")
+            return HttpResponseRedirect(reverse('uni:login'))
+
+
+class CreateSymposium(generic.CreateView):
+    model = models.Symposium
+    form_class = forms.SymposiumForm
+    template_name = 'uni/class-factory.html'
+
+    def form_valid(self, form):
+        symposium = form.save(self.request)
+        logger.info(f"symposium is {symposium}")
+        user = self.request.user  # Adds the user to the symposium
+        # after creation
+        user.student_data.member_of = symposium
+        user.student_data.save()
+        logger.info(f"{user} is now a member of {user.student_data.member_of}")
+        messages.success(self.request,
+                         f"class {form.cleaned_data['name']} \
+                         successfully created")
+        return HttpResponseRedirect(reverse('uni:dashboard'))

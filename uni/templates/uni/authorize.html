@@ -1,0 +1,33 @@
+{% extends 'uni/form_base.html' %}
+{% block title %}Class Authorization{% endblock title %}
+
+{% block form_method %}POST{% endblock form_method %}
+{% block form_action %}{% endblock form_action %}
+{% block form_fields %}
+<div class="alert alert-info" role="alert">
+  <div class="container">
+    <div class="alert-icon">
+      <i class="now-ui-icons travel_info"></i>
+    </div>
+    <strong>Notice!</strong> This page is only for class Governors and Deputites to gain class control.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">
+        <i class="now-ui-icons ui-1_simple-remove"></i>
+      </span>
+    </button>
+  </div>
+</div>
+<h3>Class Authorization</h3>
+
+<div class="form-group">
+    <label for="rank">Rank</label>
+    <select class="form-control" id="rank" name="rank">
+      {% for x, y in form.fields.rank.choices %}
+      <option value="{{ x }}"{% if form.fields.rank.value == x %} selected{% endif %}>{{ y }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+{% endblock form_fields %}
+
+{% block submit_button_text %}Authorize{% endblock submit_button_text %}
