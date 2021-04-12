@@ -326,3 +326,68 @@ class SymposiumForm(forms.ModelForm):
                   'about',
                   'poster_image',
                   ]
+
+
+class PhoneNumberForm(forms.Form):
+    number = forms.CharField(max_length=14)
+
+
+class UpdateUserForm(forms.Form):
+    username = forms.CharField(max_length=50, required=False)
+    email = forms.CharField(max_length=50, required=False)
+    first_name = forms.CharField(max_length=50, required=False)
+    last_name = forms.CharField(max_length=50, required=False)
+
+    def clean(self):
+        super().clean()
+        self.validate('username', 'Username already exists')
+        self.validate('username', 'Email is already attached to \
+        another account')
+
+    def validate(self, field, err_msg):
+        if self.cleaned_data[field] is not None:
+            if field == 'username':
+                try:
+                    user = USER.objects.get(username=self.cleaned_data[field])
+                    if (user.email != self.cleaned_data['email'] and
+                            user.first_name !=
+                            self.cleaned_data['first_name']):
+                        self.add_error(f'{field}',
+                                       forms.ValidationError(err_msg))
+                except USER.DoesNotExist:
+                    pass
+                except Exception as e:
+                    raise(e)
+            elif field == 'email':
+                try:
+                    user = USER.objects.get(email=self.cleaned_data[field])
+                    if (user.username != self.cleaned_data['username'] and
+                            user.first_name !=
+                            self.cleaned_data['first_name']):
+                        self.add_error(f'{field}',
+                                       forms.ValidationError(err_msg))
+                except USER.DoesNotExist:
+                    pass
+                except Exception as e:
+                    raise(e)
+            else:
+                pass
+
+
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = models.Student
+        fields = [
+            'matric_no',
+            'reg_no',
+            'school_email',
+            'address',
+            'gender',
+            'religion',
+            'dob',
+            'bio',
+            'passport_photograph',
+            'profile_picture',
+            'signature',
+            'state_of_origin',
+        ]

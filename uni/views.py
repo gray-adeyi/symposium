@@ -9,6 +9,7 @@ from django.contrib.auth import (
 from django.views import generic
 from django.views import View
 import logging
+from main.models import SiteInfo
 from . import (
     forms,
     models,
@@ -29,7 +30,9 @@ class Register(View):
     def __init__(self, *args, **kwargs):
         super(Register, self).__init__(*args, **kwargs)
         self.template_name = 'uni/register.html'
-        self.ctx = {'form': forms.RegisterForm()}
+        self.ctx = {
+            'form': forms.RegisterForm(),
+            'site_info': SiteInfo.objects.get()}
 
     def get(self, request):
         return render(request, self.template_name, self.ctx)
@@ -76,7 +79,9 @@ class Login(View):
     def __init__(self, *args, **kwargs):
         super(Login, self).__init__(*args, **kwargs)
         self.template_name = 'uni/login.html'
-        self.ctx = {'form': forms.LoginForm()}
+        self.ctx = {
+            'form': forms.LoginForm(),
+            'site_info': SiteInfo.objects.get()}
 
     def get(self, request):
         return render(request, self.template_name, self.ctx)
@@ -137,7 +142,9 @@ class Dashboard(generic.View):
     """
     def __init__(self, *args, **kwargs):
         self.template_name = "uni/dashboard.html"
-        self.ctx = {}
+        self.ctx = {
+            'site_info': SiteInfo.objects.get()
+        }
 
     def get(self, request):
         if request.user.is_authenticated:
@@ -153,12 +160,45 @@ class Profile(generic.View):
     Holds logic for the user
     profile page.
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user_form=None, number_form=None, *args, **kwargs):
         self.template_name = "uni/profile.html"
-        self.ctx = {}
+        self.ctx = {
+            'site_info': SiteInfo.objects.get()
+        }
+        if user_form is not None:
+            self.ctx['user_form'] = user_form
+        if number_form is not None:
+            self.ctx['number_form'] = number_form
 
     def get(self, request):
-        return render(request, self.template_name, self.ctx)
+        if request.user.is_authenticated:
+            user_info = forms.StudentForm(instance=request.user.student_data)
+            self.ctx['student_data_form'] = user_info
+            return render(request, self.template_name, self.ctx)
+        else:
+            messages.error(request, "You're required to login to \
+                access this page.")
+            return HttpResponseRedirect(reverse('uni:login'))
+
+    def post(self, request):
+        if request.user.is_authenticated:
+            student_data = forms.StudentForm(request.POST, request.FILES,
+                                             instance=request.user.
+                                             student_data)
+            if student_data.is_valid():
+                logger.info("member_of: {student_data.cleaned_data.get('member_of')}")
+                logger.info("basic_data: {student_data.cleaned_data.get('basic_data')}")
+                logger.info("matric_no: {student_data.cleaned_data.get('matric_no')}")
+                logger.info("reg_no: {student_data.cleaned_data.get('reg_no')}")
+                student_data.save()
+                messages.success(request, "Update successful")
+                return HttpResponseRedirect(reverse('uni:profile'))
+            else:
+                logger.error(f"{student_data.errors}")
+                self.ctx['student_data_form'] = student_data
+                return self.get(request)
+        else:
+            return HttpResponseRedirect(reverse('uni:login'))
 
 
 class LeaderAuthorization(generic.View):
@@ -227,3 +267,68 @@ class CreateSymposium(generic.CreateView):
                          f"class {form.cleaned_data['name']} \
                          successfully created")
         return HttpResponseRedirect(reverse('uni:dashboard'))
+
+
+def updated_user_info(request):
+    if request.user.is_authenticated and request.method == 'POST':
+        new_user_data = forms.UpdateUserForm(request.POST)
+        if new_user_data.is_valid():
+            user = request.user
+            logger.info(f'new firstname is \
+                        {new_user_data.cleaned_data.get("first_name")}')
+            user.first_name = new_user_data.cleaned_data.get('first_name',
+                                                             user.first_name)
+            user.last_name = new_user_data.cleaned_data.get('last_name',
+                                                            user.last_name)
+            user.username = new_user_data.cleaned_data.get('username',
+                                                           user.username)
+            user.email = new_user_data.cleaned_data.get('email',
+                                                        user.email)
+            user.save()
+            messages.success(request, "Update was successful")
+            return HttpResponseRedirect(reverse('uni:profile'))
+        else:
+            logger.error(f"An error occured {new_user_data.errors}")
+            return Profile(user_form=new_user_data).get(request)
+    else:
+        return HttpResponseRedirect(reverse('uni:login'))
+
+
+def add_phone_number(request):
+    if request.user.is_authenticated and request.method == 'POST':
+        new_number = forms.PhoneNumberForm(request.POST)
+        if new_number.is_valid():
+            number = models.StudentPhoneNumber(
+                                               student=request.user.
+                                               student_data,
+                                               number=new_number.
+                                               cleaned_data.get('number'))
+            number.save()
+            return HttpResponseRedirect(reverse('uni:profile'))
+        else:
+            logger.error(f"{new_number.errors}")
+            messages.error(request, "An error occured while trying to \
+            add phone number")
+            return Profile(number_form=new_number).get(request)
+    else:
+        return HttpResponseRedirect(reverse('uni:login'))
+
+
+def remove_phone_number(request, id):
+    if request.user.is_authenticated and request.method == 'GET':
+        try:
+            number = models.StudentPhoneNumber.objects.get(student=request.
+                                                           user.student_data,
+                                                           pk=id)
+            number.delete()
+            messages.success(request, "Phone number successfully removed")
+            return HttpResponseRedirect(reverse('uni:profile'))
+        except models.StudentPhoneNumber.DoesNotExist:
+            messages.error(request, "Phone number does not exist")
+            return HttpResponseRedirect(reverse('uni:profile'))
+        except Exception as e:
+            logger.error(str(e))
+            return HttpResponseRedirect(reverse('uni:profile'))
+
+    else:
+        return HttpResponseRedirect(reverse('uni:login'))

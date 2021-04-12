@@ -4,11 +4,11 @@ from . import views
 app_name = "uni"
 
 urlpatterns = [
-    path('', views.GTemplate.as_view(),),
+    path('template/', views.GTemplate.as_view(),),
+    path('', views.Login.as_view(), name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('register/', views.Register.as_view(), name='register'),
     path('activate/<slug:link>', views.Activate.as_view(), name='activate'),
-    path('login/', views.Login.as_view(), name='login'),
-    path('logout/', views.logout_view, name='logout'),
     path('send-reset-link/', views.SendPasswordReset.as_view(),
          name='reset-link'),
     path('reset/', views.PasswordReset.as_view(), name='reset'),
@@ -18,4 +18,10 @@ urlpatterns = [
          name='create-class'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),
     path('profile/', views.Profile.as_view(), name='profile'),
+    path('profile/update-user-info/', views.updated_user_info,
+         name='update-user-info'),
+    path('profile/add-number/', views.add_phone_number,
+         name='add-number'),
+    path('profile/remove-number/<str:id>/', views.remove_phone_number,
+         name='remove-number'),
 ]

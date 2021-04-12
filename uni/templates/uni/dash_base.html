@@ -42,8 +42,8 @@
         Tip 1: You can change the color of the sidebar using: data-color="blue | green | orange | red | yellow"
     -->
       <div class="logo">
-        <a href="http://www.creative-tim.com" class="simple-text logo-mini">
-          CT
+        <a href="{% url 'main:about' %}" class="simple-text logo-mini" title="about {{ site_info.name }}">
+          <i class="fa fa-school"></i>
         </a>
         <a href="http://www.creative-tim.com" class="simple-text logo-normal">
           {{ request.user.first_name }} {{ request.user.last_name }}
@@ -51,14 +51,14 @@
       </div>
       <div class="sidebar-wrapper" id="sidebar-wrapper">
         <ul class="nav">
-          <li class="active ">
-            <a href="./dashboard.html">
+          <li class="{% if request.get_full_path == '/dashboard/' %}active{% endif %}">
+            <a href="{% url 'uni:dashboard' %}">
               <i class="now-ui-icons design_app"></i>
               <p>Dashboard</p>
             </a>
           </li>
-          <li>
-            <a href="./user.html">
+          <li class="{% if request.get_full_path == '/profile/' %}active{% endif %}">
+            <a href="{% url 'uni:profile' %}">
               <i class="now-ui-icons users_single-02"></i>
               <p>User Profile</p>
             </a>
@@ -153,7 +153,7 @@
                 </div>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#pablo">
+                <a class="nav-link" href="{% url 'uni:profile' %}">
                   <i class="now-ui-icons users_single-02"></i>
                   <p>
                     <span class="d-lg-none d-md-block">My Profile</span>
@@ -170,30 +170,33 @@
       </div>
       {% block content %}{% endblock content %}
       <footer class="footer">
-        <div class=" container-fluid ">
+        <div class=" container ">
           <nav>
             <ul>
               <li>
-                <a href="https://www.creative-tim.com">
-                  Creative Tim
+                <a href="{% url 'main:about' %}">
+                  About
                 </a>
               </li>
               <li>
-                <a href="http://presentation.creative-tim.com">
-                  About Us
+                <a href="#">
+                  Contributors
                 </a>
               </li>
               <li>
-                <a href="http://blog.creative-tim.com">
-                  Blog
+                <a href="#">
+                  Donate
                 </a>
               </li>
             </ul>
           </nav>
           <div class="copyright" id="copyright">
-            &copy; <script>
+            &copy;
+            <script>
               document.getElementById('copyright').appendChild(document.createTextNode(new Date().getFullYear()))
-            </script>, Designed by <a href="https://www.invisionapp.com" target="_blank">Invision</a>. Coded by <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>.
+            </script>, Designed by
+            <a href="https://www.invisionapp.com" target="_blank">Invision</a>. Coded by
+            <a href="https://www.creative-tim.com" target="_blank">Creative Tim</a>.
           </div>
         </div>
       </footer>
