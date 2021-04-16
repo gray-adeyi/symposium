@@ -63,18 +63,20 @@
               <p>User Profile</p>
             </a>
           </li>
-          <li>
-            <a href="./icons.html">
+          <li class="{% if request.get_full_path == '/class-groups/expore/' %}active{% endif %}">
+            <a href="{% url 'uni:explore-classes' %}">
               <i class="now-ui-icons education_atom"></i>
-              <p>Explore Classes</p>
+              <p>Explore Class Groups</p>
             </a>
           </li>
-          <li>
-            <a href="./map.html">
+          {% if request.user.student_data.member_of != '' or request.user.student_data.member_of is not None %}
+          <li class="{% if request.get_full_path == '/FAQs/' %}active{% endif %}">
+            <a href="{% url 'uni:faqs' %}">
               <i class="now-ui-icons location_map-big"></i>
-              <p>Maps</p>
+              <p>FAQs</p>
             </a>
           </li>
+          {% endif %}
           <li>
             <a href="./notifications.html">
               <i class="now-ui-icons ui-1_bell-53"></i>
@@ -166,7 +168,27 @@
       </nav>
       <!-- End Navbar -->
       <div class="panel-header panel-header-lg">
-        <canvas id="bigDashboardChart"></canvas>
+          <div class="container">
+            <div class="row">
+              <div class="col-8">
+                {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}" role="alert">
+                  <div class="container">
+                    <div class="alert-icon">
+                      <i class="now-ui-icons travel_info"></i>
+                    </div>
+                    <strong>{{message.tags | upper }}</strong> {{ message.message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                      <span aria-hidden="true">
+                        <i class="now-ui-icons ui-1_simple-remove"></i>
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
       </div>
       {% block content %}{% endblock content %}
       <footer class="footer">

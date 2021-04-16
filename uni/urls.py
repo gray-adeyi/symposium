@@ -24,4 +24,9 @@ urlpatterns = [
          name='add-number'),
     path('profile/remove-number/<str:id>/', views.remove_phone_number,
          name='remove-number'),
+    path('class-groups/expore/', views.ExploreSymposium.as_view(),
+         name='explore-classes'),
+    path('class-groups/join/<str:pk>/', views.join_symposium,
+         name='join-class'),
+    path('FAQs/', views.FAQView.as_view(), name='faqs'),
 ]

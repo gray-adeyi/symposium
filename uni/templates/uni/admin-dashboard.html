@@ -15,142 +15,85 @@
 
 -->
 {% extends 'uni/dash_base.html' %}
-{% load duration %}
+<!DOCTYPE html>
 
       {% block content %}
       {% if request.user.student_data.member_of is not None %}
       <div class="content">
         <div class="row">
-          <div class="col-md-6 col-sm-12">
-            <div class="card">
+          <div class="col-lg-4">
+            <div class="card card-chart">
               <div class="card-header">
-                <h5 class="card-category text-right">Today is {{ date }}</h5>
-                <h4 class="card-title">Timetable</h4>
+                <h5 class="card-category">Global Sales</h5>
+                <h4 class="card-title">Shipped Products</h4>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret" data-toggle="dropdown">
+                    <i class="now-ui-icons loader_gear"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                  </div>
+                </div>
               </div>
               <div class="card-body">
-                {% if request.user.student_data.member_of.timetable %}
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead class=" text-primary">
-                      <th>
-                        S/N
-                      </th>
-                      <th>
-                        Course
-                      </th>
-                      <th>
-                        Type
-                      </th>
-                      <th>
-                        Date & Start Time
-                      </th>
-                      <th class="text-right">
-                        Duration
-                      </th>
-                    </thead>
-                    <tbody>
-                      {% for unit in request.user.student_data.member_of.timetable.units.current_and_future %}
-                      <tr>
-                        <td>
-                          {{ forloop.counter }}
-                        </td>
-                        <td>
-                            {{ unit.course.course.code }}
-                        </td>
-                        <td>
-                          {{ unit.get_unit_type_display }}
-                        </td>
-                        <td>
-                          <i class="now-ui-icons ui-2_time-alarm"></i> {{ unit.date_time|date:"F j, Y" }} @ {{ unit.date_time|date:"fa" }}
-                        </td>
-                        <td class="text-right">
-                          {{ unit.duration | duration }}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+                <div class="chart-area">
+                  <canvas id="lineChartExample"></canvas>
                 </div>
-                {% else %}
-                <h5>No timetable yet.</h5>
-                {% endif %}
+              </div>
+              <div class="card-footer">
+                <div class="stats">
+                  <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-4 col-sm-12">
+          <div class="col-lg-4 col-md-6">
             <div class="card card-chart">
               <div class="card-header">
-                <h5 class="card-category"></h5>
-                <h4 class="card-title">Assignment{{ request.user.student_data.member_of.assignments.current_and_future | pluralize }}</h4>
+                <h5 class="card-category">2018 Sales</h5>
+                <h4 class="card-title">All products</h4>
+                <div class="dropdown">
+                  <button type="button" class="btn btn-round btn-outline-default dropdown-toggle btn-simple btn-icon no-caret" data-toggle="dropdown">
+                    <i class="now-ui-icons loader_gear"></i>
+                  </button>
+                  <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                    <a class="dropdown-item text-danger" href="#">Remove Data</a>
+                  </div>
+                </div>
               </div>
               <div class="card-body">
-                    {% if request.user.student_data.member_of.assignments %}
-                    <div class="table-responsive">
-                      <table class="table">
-                        <thead class=" text-primary">
-                          <th>
-                            S/N
-                          </th>
-                          <th>
-                            Course
-                          </th>
-                          <th>
-                            Submission Date
-                          </th>
-                          <th class="text-right">
-
-                          </th>
-                        </thead>
-                        <tbody>
-                          {% for assignment in request.user.student_data.member_of.assignments.current_and_future %}
-                          <tr>
-                            <td>
-                              {{ forloop.counter }}
-                            </td>
-                            <td>
-                              {{ assignment.course.course.code }}
-                            </td>
-                            <td>
-                              <i class="now-ui-icons ui-2_time-alarm"></i> {{  assignment.submission_date |date:"F j, Y" }} @ {{ assignment.submission_date |date:"fa" }}
-                            </td>
-                            <td class="text-right">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ assignment.course.course.code }}-{{ assignment.pk }}">view</button>
-                            </td>
-                          </tr>
-                          {% endfor %}
-                      </tbody>
-                      </table>
-                    </div>
-                    {% for assignment in request.user.student_data.member_of.assignments.current_and_future %}
-                    <!-- Modal -->
-<div class="modal fade" id="{{ assignment.course.course.code }}-{{ assignment.pk }}" tabindex="-1" role="dialog" aria-labelledby="{{ assignment.course.course.code }}" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{ assignment.course.course.code }} Assignment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        {{ assignment.questions | safe }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">view on page</button>
-      </div>
-    </div>
-  </div>
-</div>
-                    {% endfor %}
-                    {% else %}
-                    <h5>No assignments yet.</h5>
-                    {% endif %}
-
-
+                <div class="chart-area">
+                  <canvas id="lineChartExampleWithNumbersAndGrid"></canvas>
+                </div>
               </div>
               <div class="card-footer">
-
+                <div class="stats">
+                  <i class="now-ui-icons arrows-1_refresh-69"></i> Just Updated
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 col-md-6">
+            <div class="card card-chart">
+              <div class="card-header">
+                <h5 class="card-category">Email Statistics</h5>
+                <h4 class="card-title">24 Hours Performance</h4>
+              </div>
+              <div class="card-body">
+                <div class="chart-area">
+                  <canvas id="barChartSimpleGradientsNumbers"></canvas>
+                </div>
+              </div>
+              <div class="card-footer">
+                <div class="stats">
+                  <i class="now-ui-icons ui-2_time-alarm"></i> Last 7 days
+                </div>
               </div>
             </div>
           </div>

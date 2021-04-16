@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
@@ -20,7 +21,7 @@ USER = get_user_model()
 
 
 class GTemplate(generic.TemplateView):
-    template_name = "uni/landing-page.html"
+    template_name = "uni/tables.html"
 
 
 class Register(View):
@@ -143,7 +144,8 @@ class Dashboard(generic.View):
     def __init__(self, *args, **kwargs):
         self.template_name = "uni/dashboard.html"
         self.ctx = {
-            'site_info': SiteInfo.objects.get()
+            'site_info': SiteInfo.objects.get(),
+            'date': datetime.date.today()
         }
 
     def get(self, request):
@@ -186,10 +188,14 @@ class Profile(generic.View):
                                              instance=request.user.
                                              student_data)
             if student_data.is_valid():
-                logger.info("member_of: {student_data.cleaned_data.get('member_of')}")
-                logger.info("basic_data: {student_data.cleaned_data.get('basic_data')}")
-                logger.info("matric_no: {student_data.cleaned_data.get('matric_no')}")
-                logger.info("reg_no: {student_data.cleaned_data.get('reg_no')}")
+                logger.info("member_of: \
+                {student_data.cleaned_data.get('member_of')}")
+                logger.info("basic_data: \
+                {student_data.cleaned_data.get('basic_data')}")
+                logger.info("matric_no: \
+                {student_data.cleaned_data.get('matric_no')}")
+                logger.info("reg_no: \
+                {student_data.cleaned_data.get('reg_no')}")
                 student_data.save()
                 messages.success(request, "Update successful")
                 return HttpResponseRedirect(reverse('uni:profile'))
@@ -269,6 +275,36 @@ class CreateSymposium(generic.CreateView):
         return HttpResponseRedirect(reverse('uni:dashboard'))
 
 
+class ExploreSymposium(generic.ListView):
+    """
+    This view serves all the class groups
+    also known as symposiums and used interchangably
+    """
+    template_name = 'uni/expore-symposiums.html'
+    context_object_name = 'class_groups'
+    paginate_by = 24
+    model = models.Symposium
+
+
+class FAQView(generic.ListView):
+    """
+    This view serves all FAQs particular to
+    the request.user class group.
+    """
+    template_name = 'uni/map.html'
+    context_object_name = 'faqs'
+
+    def get_queryset(self):
+        return models.FAQ.objects.filter(symposium=self.request.
+                                         user.student_data.member_of)
+
+###################################################
+#
+#   FUNCTION BASED VIEWS
+#
+###################################################
+
+
 def updated_user_info(request):
     if request.user.is_authenticated and request.method == 'POST':
         new_user_data = forms.UpdateUserForm(request.POST)
@@ -332,3 +368,17 @@ def remove_phone_number(request, id):
 
     else:
         return HttpResponseRedirect(reverse('uni:login'))
+
+
+def join_symposium(request, pk):
+    if not request.user.is_anonymous:
+        symposium = models.Symposium.objects.get(pk=pk)
+        request.user.student_data.member_of = symposium
+        request.user.student_data.save()
+        messages.success(request, f"You have been added to {symposium.name}")
+        logger.info(f"{request.user} added to {symposium}")
+        return HttpResponseRedirect(reverse('uni:dashboard'))
+    else:
+        messages.error(request, f"Can't join a class group until you're \
+        logged in")
+        return HttpResponseRedirect(reverse('uni:expore-classes'))
