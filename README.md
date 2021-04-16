@@ -1,6 +1,6 @@
 # Symposium
-A web based classroom app written in (Python)[https://www.python.org/] using
-(Django Framework)[https://www.djangoproject.com/]
+A web based classroom app written in [Python](https://www.python.org/) using
+[Django Framework](https://www.djangoproject.com/)
 adapted for higher institutions.
 
 ## Features
