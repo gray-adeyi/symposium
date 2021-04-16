@@ -116,7 +116,7 @@
                 <span class="navbar-toggler-bar bar3"></span>
               </button>
             </div>
-            <a class="navbar-brand" href="#pablo">{{ request.user.first_name }}'s Dashboard</a>
+            <a class="navbar-brand" href="#">{{ request.user.first_name }}'s Dashboard</a>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-bar navbar-kebab"></span>
@@ -136,7 +136,7 @@
             </form>
             <ul class="navbar-nav">
               <li class="nav-item">
-                <a class="nav-link" href="#pablo">
+                <a class="nav-link" href="#">
                   <i class="now-ui-icons business_bank"></i>
                   <p>
                     <span class="d-lg-none d-md-block">Class Page</span>
@@ -167,28 +167,20 @@
         </div>
       </nav>
       <!-- End Navbar -->
-      <div class="panel-header panel-header-lg">
-          <div class="container">
-            <div class="row">
-              <div class="col-8">
-                {% for message in messages %}
-                <div class="alert {% if message.tags == 'error' %}alert-danger{% else %}alert-{{ message.tags }}{% endif %}" role="alert">
-                  <div class="container">
-                    <div class="alert-icon">
-                      <i class="now-ui-icons travel_info"></i>
-                    </div>
-                    <strong>{{message.tags | upper }}</strong> {{ message.message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">
-                        <i class="now-ui-icons ui-1_simple-remove"></i>
-                      </span>
-                    </button>
-                  </div>
-                </div>
-                {% endfor %}
+      <div class="panel-header panel-header-lg mb-5">
+        <div class="container">
+          <div class="row">
+            <div class="card">
+              <div class="card-body">
+                <blockquote class="blockquote blockquote-primary mb-0">
+                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>
+                  <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
+                </blockquote>
               </div>
             </div>
+
           </div>
+        </div>
       </div>
       {% block content %}{% endblock content %}
       <footer class="footer">
@@ -224,6 +216,7 @@
       </footer>
     </div>
   </div>
+
   <!--   Core JS Files   -->
   <script src="{% static 'uni/js/core/jquery.min.js' %}"></script>
   <script src="{% static 'uni/js/core/popper.min.js' %}"></script>
@@ -238,6 +231,24 @@
 
   <!-- Control Center for Now Ui Dashboard: parallax effects, scripts for the example pages etc -->
   <script src="{% static 'uni/js/now-ui-dashboard.min.js' %}?v=1.5.0" type="text/javascript"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      {
+        %
+        for message in messages %
+      }
+      setTimeout(1000, nowuiDashboard.showNotification(
+        'top',
+        'right',
+        '{% if message.tags == '
+        error ' %}danger{% else %}{{ message.tags }}{% endif %}',
+        "now-ui-icons travel_info",
+        '{{ message }}')); {
+        % endfor %
+      }
+    });
+  </script>
+  {% block script %}{% endblock script %}
 </body>
 
 </html>

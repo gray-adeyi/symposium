@@ -2,9 +2,47 @@ from django.db import models
 from django.contrib.auth import get_user_model
 import secrets
 import datetime as dt
+from django.utils.timezone import make_aware
+import logging
+from io import BytesIO
+from PIL import Image
+from django.core.files.base import ContentFile
 
-# Create your models here.
+# default user model.
 USER = get_user_model()
+
+logger = logging.getLogger(__name__)
+
+
+class ImageCompressMixin:
+    """
+    Mixin to compress models
+    `ImageField`
+    """
+    def _compress_img(self, img, quality=20, format='JPEG'):
+        """
+        Function helps in the reduction of image
+        quality
+        """
+        logger.info("Compressing image")
+        img = Image.open(img)
+        compressed_img = BytesIO()
+        img.save(compressed_img, quality=quality, format=format)
+        compressed_img.seek(0)
+        return compressed_img
+
+    def compress_img(self, field):
+        """
+        Compresses the image of the
+        field specified
+        """
+        compressed = self._compress_img(img=field)
+        field.save(
+            field.name,
+            ContentFile(compressed.read()),
+            save=False,
+        )
+        compressed.close()
 
 
 class Faculty(models.Model):
@@ -50,7 +88,7 @@ class Department(models.Model):
         return self.name
 
 
-class Course(models.Model):
+class Course(ImageCompressMixin, models.Model):
     faculty = models.ForeignKey(Faculty, null=True, on_delete=models.SET_NULL,
                                 related_name='courses', blank=True)
     department = models.ForeignKey(Department, null=True,
@@ -65,8 +103,12 @@ class Course(models.Model):
     def __str__(self):
         return self.code
 
+    def save(self):
+        self.compress_img(self.poster_image)
+        super().save()
 
-class Symposium(models.Model):
+
+class Symposium(ImageCompressMixin, models.Model):
     """
     Ignore it's unusual name. This
     models is models the Class in which
@@ -89,9 +131,18 @@ class Symposium(models.Model):
     level = models.CharField(max_length=3, choices=LEVEL_OPTIONS)
     about = models.TextField(blank=True)
     poster_image = models.ImageField(blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
+
+    def save(self):
+        self.compress_img(self.poster_image)
+        super().save()
+
+    class Meta:
+        ordering = ['-created_on']
 
 
 class OfferedCourse(models.Model):
@@ -105,7 +156,7 @@ class OfferedCourse(models.Model):
 
 
 class AssignmentManager(models.Manager):
-    def current_and_future(self):
+    def now_and_future(self):
         """
         Archives `Assignment` with
         `submission_date` older than current date and
@@ -113,11 +164,13 @@ class AssignmentManager(models.Manager):
         those with dates matching the current
         date and future dates.
         """
-        old_assigments = self.filter(submission_date__lt=dt.datetime.now())
+        old_assigments = self.filter(submission_date__lt=make_aware(
+            dt.datetime.now()))
         for assignment in old_assigments:
             assignment.archive = True
             assignment.save()
-        return self.filter(submission_date__gte=dt.datetime.now())
+        nf = make_aware(dt.datetime.now())
+        return self.filter(submission_date__gte=nf)
 
 
 class Assignment(models.Model):
@@ -144,7 +197,7 @@ class Timetable(models.Model):
 
 
 class TimetableUnitManager(models.Manager):
-    def current_and_future(self):
+    def now_and_future(self):
         """
         Archives `TimetableUnit` with
         date older than current date and
@@ -152,11 +205,13 @@ class TimetableUnitManager(models.Manager):
         those with dates matching the current
         date and future dates.
         """
-        old_timetable_unit = self.filter(date_time__lt=dt.datetime.now())
+        old_timetable_unit = self.filter(date_time__lt=make_aware(
+            dt.datetime.now()))
         for unit in old_timetable_unit:
             unit.archive = True
             unit.save()
-        return self.filter(date_time__gte=dt.datetime.now())
+        nf = make_aware(dt.datetime.now())
+        return self.filter(date_time__gte=nf)
 
 
 class TimetableUnit(models.Model):
@@ -195,7 +250,7 @@ class FAQ(models.Model):
         ordering = ['-created_on']
 
 
-class Student(models.Model):
+class Student(ImageCompressMixin, models.Model):
     """
     `Student` model represents each university student member
     and holds their data.
@@ -282,6 +337,9 @@ class Student(models.Model):
         return self.basic_data.first_name
 
     def save(self, *args, **kwargs):
+        self.compress_img(self.passport_photograph)
+        self.compress_img(self.profile_picture)
+        self.compress_img(self.signature)
         if self.link is not None:
             self.link = secrets.token_urlsafe(32)
         super().save(*args, **kwargs)

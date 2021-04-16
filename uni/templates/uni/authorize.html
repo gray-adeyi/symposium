@@ -20,13 +20,13 @@
 <h3>Class Authorization</h3>
 
 <div class="form-group">
-    <label for="rank">Rank</label>
-    <select class="form-control" id="rank" name="rank">
-      {% for x, y in form.fields.rank.choices %}
-      <option value="{{ x }}"{% if form.fields.rank.value == x %} selected{% endif %}>{{ y }}</option>
-      {% endfor %}
-    </select>
-  </div>
+  <label for="rank">Rank</label>
+  <select class="form-control" id="rank" name="rank">
+    {% for x, y in form.fields.rank.choices %}
+    <option value="{{ x }}" {% if form.fields.rank.value == x %} selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</div>
 
 {% endblock form_fields %}
 

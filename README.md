@@ -7,7 +7,6 @@ adapted for higher institutions.
 1. Personalized student dashboards.
 2. Payment options.
 3. Timetable and lecture updates.
-4. sms.
 
 ## Setting it up.
 Note: it is required that you have some level

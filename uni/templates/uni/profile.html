@@ -20,333 +20,333 @@
 <div class="content">
   <div class="row">
     <div class="col-md-8">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="title">Update Profile</h5>
-              </div>
-              <div class="card-body">
-                <div class="alert alert-info" role="alert">
-  <div class="container">
-    <div class="alert-icon">
-      <i class="now-ui-icons travel_info"></i>
-    </div>
-    <strong>Notice!</strong> {{ site_info.name }} does not require that you supply all data. they
-    are only provided if it is needed by your class governor for administrative purposes.
-    You can always update you profile multiple times and anytime.
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">
-        <i class="now-ui-icons ui-1_simple-remove"></i>
-      </span>
-    </button>
-  </div>
-</div>
-                <form method="post" action="" enctype="multipart/form-data">
-                  {% csrf_token %}
-
-                  <div class="row">
-                    <div class="col-md-5 pr-1">
-                      <div class="form-group">
-                        <label>Class Group (update from explore classes)</label>
-                        <input type="text" class="form-control" disabled="" placeholder="Class Group" value="{{ request.user.student_data.member_of }}">
-                      </div>
-                    </div>
-                    <div class="col-md-3 px-1">
-                      <div class="form-group">
-                        <label>Matric no</label>
-                        <input type="text" class="form-control" placeholder="matric no..." name="matric_no" value="{% if student_data_form.matric_no.value is not None %}{{ student_data_form.matric_no.value }}{% endif %}">
-                      </div>
-                    </div>
-                    <div class="col-md-4 pl-1">
-                      <div class="form-group">
-                        <label for="exampleInputEmail1">Reg No</label>
-                        <input type="l" class="form-control" placeholder="JAMB registration number" name="reg_no" value="{% if student_data_form.reg_no.value is not None %}{{ student_data_form.reg_no.value }}{% endif %}">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-6 pr-1">
-                      <div class="form-group">
-                        <label>School Email</label>
-                        <input type="email" class="form-control" placeholder="e.g john.d.2005003026@gmail.com" name="school_email" value="{% if student_data_form.school_email.value is not None %}{{ student_data_form.school_email.value }}{% endif %}">
-                      </div>
-                    </div>
-                    <div class="col-md-6 pl-1">
-                      <div class="form-group">
-                        <label>Date of birth (yyyy-mm-dd)</label>
-                        <input type="text" class="form-control" placeholder="e.g 2020-01-01" name="dob" value="{% if student_data_form.dob.value is not None %}{{ student_data_form.dob.value |date:'Y-m-d'}}{% endif %}">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="form-group col-md-4">
-                     <label for="state_of_origin">State of origin</label>
-                     {% if student_data_form.state_of_origin.value != '' or student_data_form.state_of_origin.value is not None %}
-                     <br>Currently: {{ request.user.student_data.get_state_of_origin_display }}
-                     {% endif %}
-                     <select class="form-control" id="state_of_origin" name="state_of_origin">
-                       {% for x, y in student_data_form.fields.state_of_origin.choices %}
-                       <option value="{{ x }}"{% if student_data_form.state_of_origin.value == x %} selected{% endif %}>{{ y }}</option>
-                       {% endfor %}
-                     </select>
-                   </div>
-                   <div class="form-group col-md-4">
-                    <label for="gender">Gender</label>
-                    {% if student_data_form.gender.value != '' or student_data_form.gender.value is not None %}
-                    <br>Currently: {{ request.user.student_data.get_gender_display }}
-                    {% endif %}
-                    <select class="form-control" id="gender" name="gender">
-                      {% for x, y in student_data_form.fields.gender.choices %}
-                      <option value="{{ x }}"{% if student_data_form.gender.value == x %} selected{% endif %}>{{ y }}</option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                  <div class="form-group col-md-4">
-                   <label for="religion">Religion</label>
-                   {% if student_data_form.religion.value != '' or student_data_form.religion.value is not None %}
-                   <br>Currently: {{ request.user.student_data.get_gender_display }}
-                   {% endif %}
-                   <select class="form-control" id="rank" name="religion">
-                     {% for x, y in student_data_form.fields.religion.choices %}
-                     <option value="{{ x }}"{% if student_data_form.religion.value == x %} selected{% endif %}>{{ y }}</option>
-                     {% endfor %}
-                   </select>
-                 </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label>Address</label>
-                        <input type="text" class="form-control" placeholder="Home Address" name="address" value="{% if student_data_form.address.value is not None %}{{ student_data_form.address.value }}{% endif %}">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-4 pr-1">
-                      <div>
-                        <label>Profile Picture</label>
-                        {% if student_data_form.profile_picture.value %}
-                        <br>Currently: <a href="{{ request.user.student_data.profile_picture.url }}">{{ request.user.student_data.profile_picture }}</a>
-                        <input type="checkbox" name="profile_picture-clear" id="profile_picture-clear_id">
-                        <label for="profile_picture-clear_id">Clear</label><br>
-                        Change:
-                        {% endif %}
-                        <input type="file" class="form-control" accept="image/*" id="id_profile_picture" name="profile_picture">
-                      </div>
-                    </div>
-                    <div class="col-md-4 px-1">
-                      <div>
-                        <label>Passport Photograph</label>
-                        {% if student_data_form.passport_photograph.value %}
-                        <br>Currently: <a href="{{ request.user.student_data.passport_photograph.url }}">{{ request.user.student_data.passport_photograph }}</a>
-                        <input type="checkbox" name="passport_photograph-clear" id="passport_photograph-clear_id">
-                        <label for="passport_photograph-clear_id">Clear</label><br>
-                        Change:
-                        {% endif %}
-                        <input type="file" class="form-control" accept="image/*" id="id_passport_photograph" name="passport_photograph">
-                      </div>
-                    </div>
-                    <div class="col-md-4 pl-1">
-                      <div>
-                        <label>Signature</label>
-                        {% if student_data_form.signature.value %}
-                        <br>Currently: <a href="{{ request.user.student_data.signature.url }}">{{ request.user.student_data.signature }}</a>
-                        <input type="checkbox" name="signature-clear" id="signature-clear_id">
-                        <label for="signature-clear_id">Clear</label><br>
-                        Change:
-                        {% endif %}
-                        <input type="file" class="form-control" accept="image/*" id="id_signature" name="signature">
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label>About Me</label>
-                        <textarea rows="4" cols="80" class="form-control" placeholder="your bio..." name="bio">{% if student_data_form.bio.value is not None %}{{ student_data_form.bio.value }}{% endif %}</textarea>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group">
-                    <button type="submit" class="btn btn-primary">Update</button>
-                  </div>
-                </form>
-              </div>
-              <div class="card-footer">
-                  <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#updateotherinfo">Update other info</a>
-
-                  <!-- Modal -->
-  <div class="modal fade" id="updateotherinfo" tabindex="-1" role="dialog" aria-labelledby="updateotherinfoModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="updateotherinfoModalLabel">Update other info</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <div class="card">
+        <div class="card-header">
+          <h5 class="title">Update Profile</h5>
         </div>
-        <div class="modal-body">
-          <div class="container">
-            <form method='POST' action="{% url 'uni:update-user-info' %}">
-              {% csrf_token %}
-              <div class="row">
-                <div class="col-md-6 pr-1">
-                  <div class="form-group">
-                    <label>First name</label>
-                    <input type="text" class="form-control" name='first_name' placeholder="Your name..." value="{{ request.user.first_name }}">
-                  </div>
-                </div>
-                <div class="col-md-6 pr-1">
-                  <div class="form-group">
-                    <label>Last name</label>
-                    <input type="text" class="form-control" name='last_name' placeholder="Your surname..." value="{{ request.user.last_name }}">
-                  </div>
-                </div>
+        <div class="card-body">
+          <div class="alert alert-info" role="alert">
+            <div class="container">
+              <div class="alert-icon">
+                <i class="now-ui-icons travel_info"></i>
               </div>
-              <div class="row">
-                <div class="col-md-6 pr-1">
-                  <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" class="form-control" name='email' placeholder="Your email address..." value="{{ request.user.email }}">
-                  </div>
-                </div>
-                <div class="col-md-6 pr-1">
-                  <div class="form-group">
-                    <label>Username</label>
-                    <input type="text" class="form-control" name='username' placeholder="Your username..." value="{{ request.user.username }}">
-                  </div>
-                </div>
-              </div>
-              <div class="form-group">
-                <button type="submit" class="btn btn-primary">Update</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-                  <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#updatephonenumber">Update phone number</a>
-
-                  <!-- Modal -->
-  <div class="modal fade" id="updatephonenumber" tabindex="-1" role="dialog" aria-labelledby="updatephonenumberModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="updatephonenumberModalLabel">Update phone number{{ request.user.student_data.numbers.all | pluralize }}</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <div class="container">
-            <div class="col-12">
-              <div class="card">
-                <div class="card-header">
-                  <h4 class="card-title">Phone number{{ request.user.student_data.numbers.all | pluralize }} list</h4>
-                </div>
-                <div class="card-body">
-                  <div class="table-responsive">
-                    {% if request.user.student_data.numbers.all.count != 0%}
-                    <table class="table">
-                      <thead class=" text-primary">
-                        <th>
-                          S/N
-                        </th>
-                        <th>
-                          Phone number{{ request.user.student_data.numbers.all | pluralize }}
-                        </th>
-                        <th class="text-right">
-
-                        </th>
-                      </thead>
-                      <tbody>
-                        {% for number in request.user.student_data.numbers.all %}
-                        <tr>
-                          <td>{{ forloop.counter }}</td>
-                          <td>{{ number.number }}</td>
-                          <td><a href="{% url 'uni:remove-number' id=number.pk %}" rel="tooltip" title="remove number" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
-                            <i class="now-ui-icons ui-1_simple-remove"></i>
-                          </a></td>
-                        </tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                    {% else %}
-                    <p>No phone number uploaded yet.</p>
-                    {% endif %}
-                  </div>
-                </div>
-              </div>
+              <strong>Notice!</strong> {{ site_info.name }} does not require that you supply all data. they
+              are only provided if it is needed by your class governor for administrative purposes.
+              You can always update you profile multiple times and anytime.
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">
+                  <i class="now-ui-icons ui-1_simple-remove"></i>
+                </span>
+              </button>
             </div>
+          </div>
+          <form method="post" action="" enctype="multipart/form-data">
+            {% csrf_token %}
 
-            {% if number_form.errors %}
-            <div class="alert alert-danger" role="alert">
-  <div class="container">
-    {{ number_form.errors }}
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">
-        <i class="now-ui-icons ui-1_simple-remove"></i>
-      </span>
-    </button>
-  </div>
-</div>
-            {% endif %}
-
-            <form method="POST" action="{% url 'uni:add-number' %}">
-              {% csrf_token %}
-              <div class="form-row">
-                <div class="col">
-                  <div class="form-group">
-                    <label>Phone number</label>
-                    <input type="text" class="form-control" placeholder="e.g 081234567890" value="{% if number_form.number.value is not None %}{{ number_form.number.value }}{% endif%}" name="number">
-                  </div>
-                </div>
-              </div>
-              <div class="col">
+            <div class="row">
+              <div class="col-md-5 pr-1">
                 <div class="form-group">
-                  <button type="submit" class="btn btn-primary">Add</button>
+                  <label>Class Group (update from explore classes)</label>
+                  <input type="text" class="form-control" disabled="" placeholder="Class Group" value="{{ request.user.student_data.member_of }}">
                 </div>
               </div>
-            </form>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-    </div>
-  </div>
+              <div class="col-md-3 px-1">
+                <div class="form-group">
+                  <label>Matric no</label>
+                  <input type="text" class="form-control" placeholder="matric no..." name="matric_no" value="{% if student_data_form.matric_no.value is not None %}{{ student_data_form.matric_no.value }}{% endif %}">
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div class="form-group">
+                  <label for="exampleInputEmail1">Reg No</label>
+                  <input type="l" class="form-control" placeholder="JAMB registration number" name="reg_no" value="{% if student_data_form.reg_no.value is not None %}{{ student_data_form.reg_no.value }}{% endif %}">
+                </div>
               </div>
             </div>
+            <div class="row">
+              <div class="col-md-6 pr-1">
+                <div class="form-group">
+                  <label>School Email</label>
+                  <input type="email" class="form-control" placeholder="e.g john.d.2005003026@gmail.com" name="school_email" value="{% if student_data_form.school_email.value is not None %}{{ student_data_form.school_email.value }}{% endif %}">
+                </div>
+              </div>
+              <div class="col-md-6 pl-1">
+                <div class="form-group">
+                  <label>Date of birth (yyyy-mm-dd)</label>
+                  <input type="text" class="form-control" placeholder="e.g 2020-01-01" name="dob" value="{% if student_data_form.dob.value is not None %}{{ student_data_form.dob.value |date:'Y-m-d'}}{% endif %}">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group col-md-4">
+                <label for="state_of_origin">State of origin</label>
+                {% if student_data_form.state_of_origin.value != '' or student_data_form.state_of_origin.value is not None %}
+                <br>Currently: {{ request.user.student_data.get_state_of_origin_display }}
+                {% endif %}
+                <select class="form-control" id="state_of_origin" name="state_of_origin">
+                  {% for x, y in student_data_form.fields.state_of_origin.choices %}
+                  <option value="{{ x }}" {% if student_data_form.state_of_origin.value == x %} selected{% endif %}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="gender">Gender</label>
+                {% if student_data_form.gender.value != '' or student_data_form.gender.value is not None %}
+                <br>Currently: {{ request.user.student_data.get_gender_display }}
+                {% endif %}
+                <select class="form-control" id="gender" name="gender">
+                  {% for x, y in student_data_form.fields.gender.choices %}
+                  <option value="{{ x }}" {% if student_data_form.gender.value == x %} selected{% endif %}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="form-group col-md-4">
+                <label for="religion">Religion</label>
+                {% if student_data_form.religion.value != '' or student_data_form.religion.value is not None %}
+                <br>Currently: {{ request.user.student_data.get_gender_display }}
+                {% endif %}
+                <select class="form-control" id="rank" name="religion">
+                  {% for x, y in student_data_form.fields.religion.choices %}
+                  <option value="{{ x }}" {% if student_data_form.religion.value == x %} selected{% endif %}>{{ y }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>Address</label>
+                  <input type="text" class="form-control" placeholder="Home Address" name="address" value="{% if student_data_form.address.value is not None %}{{ student_data_form.address.value }}{% endif %}">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4 pr-1">
+                <div>
+                  <label>Profile Picture</label>
+                  {% if student_data_form.profile_picture.value %}
+                  <br>Currently: <a href="{{ request.user.student_data.profile_picture.url }}">{{ request.user.student_data.profile_picture }}</a>
+                  <input type="checkbox" name="profile_picture-clear" id="profile_picture-clear_id">
+                  <label for="profile_picture-clear_id">Clear</label><br>
+                  Change:
+                  {% endif %}
+                  <input type="file" class="form-control" accept="image/*" id="id_profile_picture" name="profile_picture">
+                </div>
+              </div>
+              <div class="col-md-4 px-1">
+                <div>
+                  <label>Passport Photograph</label>
+                  {% if student_data_form.passport_photograph.value %}
+                  <br>Currently: <a href="{{ request.user.student_data.passport_photograph.url }}">{{ request.user.student_data.passport_photograph }}</a>
+                  <input type="checkbox" name="passport_photograph-clear" id="passport_photograph-clear_id">
+                  <label for="passport_photograph-clear_id">Clear</label><br>
+                  Change:
+                  {% endif %}
+                  <input type="file" class="form-control" accept="image/*" id="id_passport_photograph" name="passport_photograph">
+                </div>
+              </div>
+              <div class="col-md-4 pl-1">
+                <div>
+                  <label>Signature</label>
+                  {% if student_data_form.signature.value %}
+                  <br>Currently: <a href="{{ request.user.student_data.signature.url }}">{{ request.user.student_data.signature }}</a>
+                  <input type="checkbox" name="signature-clear" id="signature-clear_id">
+                  <label for="signature-clear_id">Clear</label><br>
+                  Change:
+                  {% endif %}
+                  <input type="file" class="form-control" accept="image/*" id="id_signature" name="signature">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label>About Me</label>
+                  <textarea rows="4" cols="80" class="form-control" placeholder="your bio..." name="bio">{% if student_data_form.bio.value is not None %}{{ student_data_form.bio.value }}{% endif %}</textarea>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#updateotherinfo">Update other info</a>
+
+          <!-- Modal -->
+          <div class="modal fade" id="updateotherinfo" tabindex="-1" role="dialog" aria-labelledby="updateotherinfoModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="updateotherinfoModalLabel">Update other info</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="container">
+                    <form method='POST' action="{% url 'uni:update-user-info' %}">
+                      {% csrf_token %}
+                      <div class="row">
+                        <div class="col-md-6 pr-1">
+                          <div class="form-group">
+                            <label>First name</label>
+                            <input type="text" class="form-control" name='first_name' placeholder="Your name..." value="{{ request.user.first_name }}">
+                          </div>
+                        </div>
+                        <div class="col-md-6 pr-1">
+                          <div class="form-group">
+                            <label>Last name</label>
+                            <input type="text" class="form-control" name='last_name' placeholder="Your surname..." value="{{ request.user.last_name }}">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-6 pr-1">
+                          <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" name='email' placeholder="Your email address..." value="{{ request.user.email }}">
+                          </div>
+                        </div>
+                        <div class="col-md-6 pr-1">
+                          <div class="form-group">
+                            <label>Username</label>
+                            <input type="text" class="form-control" name='username' placeholder="Your username..." value="{{ request.user.username }}">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#updatephonenumber">Update phone number</a>
+
+          <!-- Modal -->
+          <div class="modal fade" id="updatephonenumber" tabindex="-1" role="dialog" aria-labelledby="updatephonenumberModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="updatephonenumberModalLabel">Update phone number{{ request.user.student_data.numbers.all | pluralize }}</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <div class="container">
+                    <div class="col-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h4 class="card-title">Phone number{{ request.user.student_data.numbers.all | pluralize }} list</h4>
+                        </div>
+                        <div class="card-body">
+                          <div class="table-responsive">
+                            {% if request.user.student_data.numbers.all.count != 0%}
+                            <table class="table">
+                              <thead class=" text-primary">
+                                <th>
+                                  S/N
+                                </th>
+                                <th>
+                                  Phone number{{ request.user.student_data.numbers.all | pluralize }}
+                                </th>
+                                <th class="text-right">
+
+                                </th>
+                              </thead>
+                              <tbody>
+                                {% for number in request.user.student_data.numbers.all %}
+                                <tr>
+                                  <td>{{ forloop.counter }}</td>
+                                  <td>{{ number.number }}</td>
+                                  <td><a href="{% url 'uni:remove-number' id=number.pk %}" rel="tooltip" title="remove number" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
+                                      <i class="now-ui-icons ui-1_simple-remove"></i>
+                                    </a></td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                            </table>
+                            {% else %}
+                            <p>No phone number uploaded yet.</p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {% if number_form.errors %}
+                    <div class="alert alert-danger" role="alert">
+                      <div class="container">
+                        {{ number_form.errors }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                          <span aria-hidden="true">
+                            <i class="now-ui-icons ui-1_simple-remove"></i>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    {% endif %}
+
+                    <form method="POST" action="{% url 'uni:add-number' %}">
+                      {% csrf_token %}
+                      <div class="form-row">
+                        <div class="col">
+                          <div class="form-group">
+                            <label>Phone number</label>
+                            <input type="text" class="form-control" placeholder="e.g 081234567890" value="{% if number_form.number.value is not None %}{{ number_form.number.value }}{% endif%}" name="number">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col">
+                        <div class="form-group">
+                          <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="col-md-4">
-            <div class="card card-user">
-              <div class="image">
-                <img src="../assets/img/bg5.jpg" alt="...">
-              </div>
-              <div class="card-body">
-                <div class="author">
-                  <a href="#">
-                    <img class="avatar border-gray" src="../assets/img/mike.jpg" alt="...">
-                    <h5 class="title">{{ request.user.first_name }} {{ request.user.last_name }}</h5>
-                  </a>
-                  <p class="description">
-                    {% if request.user.student_data.is_governor %}Governor{% elif request.user.student_data.is_deputy %}Deputy Governor{% else %}Regular Student{% endif %}
-                  </p>
-                </div>
-                <p class="description text-center">
-                  {{ request.user.student_data.bio }}
-                </p>
-              </div>
-              <hr>
-              <div class="button-container">
+      <div class="card card-user">
+        <div class="image">
+          <img src="../assets/img/bg5.jpg" alt="...">
+        </div>
+        <div class="card-body">
+          <div class="author">
+            <a href="#">
+              <img class="avatar border-gray" src="../assets/img/mike.jpg" alt="...">
+              <h5 class="title">{{ request.user.first_name }} {{ request.user.last_name }}</h5>
+            </a>
+            <p class="description">
+              {% if request.user.student_data.is_governor %}Governor{% elif request.user.student_data.is_deputy %}Deputy Governor{% else %}Regular Student{% endif %}
+            </p>
+          </div>
+          <p class="description text-center">
+            {{ request.user.student_data.bio }}
+          </p>
+        </div>
+        <hr>
+        <div class="button-container">
 
-              </div>
-            </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

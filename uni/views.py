@@ -21,7 +21,7 @@ USER = get_user_model()
 
 
 class GTemplate(generic.TemplateView):
-    template_name = "uni/tables.html"
+    template_name = "uni/notifications.html"
 
 
 class Register(View):
@@ -33,7 +33,7 @@ class Register(View):
         self.template_name = 'uni/register.html'
         self.ctx = {
             'form': forms.RegisterForm(),
-            'site_info': SiteInfo.objects.get()}
+            'site_info': SiteInfo.objects.filter().first()}
 
     def get(self, request):
         return render(request, self.template_name, self.ctx)
@@ -82,7 +82,7 @@ class Login(View):
         self.template_name = 'uni/login.html'
         self.ctx = {
             'form': forms.LoginForm(),
-            'site_info': SiteInfo.objects.get()}
+            'site_info': SiteInfo.objects.filter().first()}
 
     def get(self, request):
         return render(request, self.template_name, self.ctx)
@@ -144,7 +144,7 @@ class Dashboard(generic.View):
     def __init__(self, *args, **kwargs):
         self.template_name = "uni/dashboard.html"
         self.ctx = {
-            'site_info': SiteInfo.objects.get(),
+            'site_info': SiteInfo.objects.filter().first(),
             'date': datetime.date.today()
         }
 
@@ -165,7 +165,7 @@ class Profile(generic.View):
     def __init__(self, user_form=None, number_form=None, *args, **kwargs):
         self.template_name = "uni/profile.html"
         self.ctx = {
-            'site_info': SiteInfo.objects.get()
+            'site_info': SiteInfo.objects.filter().first()
         }
         if user_form is not None:
             self.ctx['user_form'] = user_form
@@ -270,8 +270,8 @@ class CreateSymposium(generic.CreateView):
         user.student_data.save()
         logger.info(f"{user} is now a member of {user.student_data.member_of}")
         messages.success(self.request,
-                         f"class {form.cleaned_data['name']} \
-                         successfully created")
+                         f"class group {form.cleaned_data['name']} \
+                         successfully created.")
         return HttpResponseRedirect(reverse('uni:dashboard'))
 
 
@@ -291,7 +291,7 @@ class FAQView(generic.ListView):
     This view serves all FAQs particular to
     the request.user class group.
     """
-    template_name = 'uni/map.html'
+    template_name = 'uni/faq.html'
     context_object_name = 'faqs'
 
     def get_queryset(self):

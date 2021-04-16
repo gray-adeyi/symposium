@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 
@@ -172,3 +172,6 @@ else:
     EMAIL_BACKEND = (
         'django.core.mail.backends.console.EmailBackend'
     )
+
+# config for autocreating primary key in models.
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

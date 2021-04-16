@@ -22,40 +22,40 @@
 <h3>Create Class Group</h3>
 
 <div class="form-group">
-    <label for="rank">Department</label>
-    <select class="form-control" id="rank" name="department">
-      {% for x, y in form.fields.department.choices %}
-      <option value="{{ x }}"{% if form.fields.department.value == x %} selected{% endif %}>{{ y }}</option>
-      {% endfor %}
-    </select>
-  </div>
+  <label for="rank">Department</label>
+  <select class="form-control" id="rank" name="department">
+    {% for x, y in form.fields.department.choices %}
+    <option value="{{ x }}" {% if form.fields.department.value == x %} selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</div>
 
-  <div class="input-group no-border input-lg">
-    <div class="input-group-prepend">
-      <span class="input-group-text">
-        <i class="now-ui-icons travel_istanbul"></i>
-      </span>
-    </div>
-    <input type="text" class="form-control" placeholder="Class name..." name="name" value="{% if form.name.value is not None %}{{ form.name.value }}{% endif %}">
+<div class="input-group no-border input-lg">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="now-ui-icons travel_istanbul"></i>
+    </span>
   </div>
+  <input type="text" class="form-control" placeholder="Class name..." name="name" value="{% if form.name.value is not None %}{{ form.name.value }}{% endif %}">
+</div>
 
-  <div class="form-group">
-      <label for="rank">Level</label>
-      <select class="form-control" id="rank" name="level">
-        {% for x, y in form.fields.level.choices %}
-        <option value="{{ x }}"{% if form.fields.level.value == x %} selected{% endif %}>{{ y }}</option>
-        {% endfor %}
-      </select>
-    </div>
+<div class="form-group">
+  <label for="rank">Level</label>
+  <select class="form-control" id="rank" name="level">
+    {% for x, y in form.fields.level.choices %}
+    <option value="{{ x }}" {% if form.fields.level.value == x %} selected{% endif %}>{{ y }}</option>
+    {% endfor %}
+  </select>
+</div>
 
-  <div class="form-group">
-    <label for="about">About Class</label>
-    <textarea class="form-control" id="id_about" rows="1" name="about"></textarea>
-  </div>
+<div class="form-group">
+  <label for="about">About Class</label>
+  <textarea class="form-control" id="id_about" rows="1" name="about"></textarea>
+</div>
 
-  <div>
-    <p><label for="id_poster_image">Poster image:</label> <input type="file" name="poster_image" accept="image/*" id="id_poster_image"></p>
-  </div>
+<div>
+  <p><label for="id_poster_image">Poster image:</label> <input type="file" name="poster_image" accept="image/*" id="id_poster_image"></p>
+</div>
 
 {% endblock form_fields %}
 

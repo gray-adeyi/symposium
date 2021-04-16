@@ -17,375 +17,375 @@
 {% extends 'uni/dash_base.html' %}
 {% load duration %}
 
-      {% block content %}
-      {% if request.user.student_data.member_of is not None %}
-      <div class="content">
-        <div class="row">
-          <div class="col-md-6 col-sm-12">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-category text-right">Today is {{ date }}</h5>
-                <h4 class="card-title">Timetable</h4>
-              </div>
-              <div class="card-body">
-                {% if request.user.student_data.member_of.timetable %}
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead class=" text-primary">
-                      <th>
-                        S/N
-                      </th>
-                      <th>
-                        Course
-                      </th>
-                      <th>
-                        Type
-                      </th>
-                      <th>
-                        Date & Start Time
-                      </th>
-                      <th class="text-right">
-                        Duration
-                      </th>
-                    </thead>
-                    <tbody>
-                      {% for unit in request.user.student_data.member_of.timetable.units.current_and_future %}
-                      <tr>
-                        <td>
-                          {{ forloop.counter }}
-                        </td>
-                        <td>
-                            {{ unit.course.course.code }}
-                        </td>
-                        <td>
-                          {{ unit.get_unit_type_display }}
-                        </td>
-                        <td>
-                          <i class="now-ui-icons ui-2_time-alarm"></i> {{ unit.date_time|date:"F j, Y" }} @ {{ unit.date_time|date:"fa" }}
-                        </td>
-                        <td class="text-right">
-                          {{ unit.duration | duration }}
-                        </td>
-                      </tr>
-                      {% endfor %}
-                    </tbody>
-                  </table>
+{% block content %}
+{% if request.user.student_data.member_of is not None %}
+<div class="content">
+  <div class="row">
+    <div class="col-md-6 col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-category text-right">Today is {{ date }}</h5>
+          <h4 class="card-title">Timetable</h4>
+        </div>
+        <div class="card-body">
+          {% if request.user.student_data.member_of.timetable %}
+          <div class="table-responsive">
+            <table class="table">
+              <thead class=" text-primary">
+                <th>
+                  S/N
+                </th>
+                <th>
+                  Course
+                </th>
+                <th>
+                  Type
+                </th>
+                <th>
+                  Date & Start Time
+                </th>
+                <th class="text-right">
+                  Duration
+                </th>
+              </thead>
+              <tbody>
+                {% for unit in request.user.student_data.member_of.timetable.units.now_and_future %}
+                <tr>
+                  <td>
+                    {{ forloop.counter }}
+                  </td>
+                  <td>
+                    {{ unit.course.course.code }}
+                  </td>
+                  <td>
+                    {{ unit.get_unit_type_display }}
+                  </td>
+                  <td>
+                    <i class="now-ui-icons ui-2_time-alarm"></i> {{ unit.date_time|date:"F j, Y" }} @ {{ unit.date_time|date:"fa" }}
+                  </td>
+                  <td class="text-right">
+                    {{ unit.duration | duration }}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <h5>No timetable yet.</h5>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 col-sm-12">
+      <div class="card card-chart">
+        <div class="card-header">
+          <h5 class="card-category"></h5>
+          <h4 class="card-title">Assignment{{ request.user.student_data.member_of.assignments.now_and_future | pluralize }}</h4>
+        </div>
+        <div class="card-body">
+          {% if request.user.student_data.member_of.assignments.now_and_future %}
+          <div class="table-responsive">
+            <table class="table">
+              <thead class=" text-primary">
+                <th>
+                  S/N
+                </th>
+                <th>
+                  Course
+                </th>
+                <th>
+                  Submission Date
+                </th>
+                <th class="text-right">
+
+                </th>
+              </thead>
+              <tbody>
+                {% for assignment in request.user.student_data.member_of.assignments.now_and_future %}
+                <tr>
+                  <td>
+                    {{ forloop.counter }}
+                  </td>
+                  <td>
+                    {{ assignment.course.course.code }}
+                  </td>
+                  <td>
+                    <i class="now-ui-icons ui-2_time-alarm"></i> {{ assignment.submission_date |date:"F j, Y" }} @ {{ assignment.submission_date |date:"fa" }}
+                  </td>
+                  <td class="text-right">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ assignment.course.course.code }}-{{ assignment.pk }}">view</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% for assignment in request.user.student_data.member_of.assignments.now_and_future %}
+          <!-- Modal -->
+          <div class="modal fade" id="{{ assignment.course.course.code }}-{{ assignment.pk }}" tabindex="-1" role="dialog" aria-labelledby="{{ assignment.course.course.code }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">{{ assignment.course.course.code }} Assignment</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
-                {% else %}
-                <h5>No timetable yet.</h5>
-                {% endif %}
+                <div class="modal-body">
+                  {{ assignment.questions | safe }}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">view on page</button>
+                </div>
               </div>
             </div>
           </div>
-          <div class="col-md-4 col-sm-12">
-            <div class="card card-chart">
-              <div class="card-header">
-                <h5 class="card-category"></h5>
-                <h4 class="card-title">Assignment{{ request.user.student_data.member_of.assignments.current_and_future | pluralize }}</h4>
-              </div>
-              <div class="card-body">
-                    {% if request.user.student_data.member_of.assignments %}
-                    <div class="table-responsive">
-                      <table class="table">
-                        <thead class=" text-primary">
-                          <th>
-                            S/N
-                          </th>
-                          <th>
-                            Course
-                          </th>
-                          <th>
-                            Submission Date
-                          </th>
-                          <th class="text-right">
+          {% endfor %}
+          {% else %}
+          <h5>No assignments yet.</h5>
+          {% endif %}
 
-                          </th>
-                        </thead>
-                        <tbody>
-                          {% for assignment in request.user.student_data.member_of.assignments.current_and_future %}
-                          <tr>
-                            <td>
-                              {{ forloop.counter }}
-                            </td>
-                            <td>
-                              {{ assignment.course.course.code }}
-                            </td>
-                            <td>
-                              <i class="now-ui-icons ui-2_time-alarm"></i> {{  assignment.submission_date |date:"F j, Y" }} @ {{ assignment.submission_date |date:"fa" }}
-                            </td>
-                            <td class="text-right">
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ assignment.course.course.code }}-{{ assignment.pk }}">view</button>
-                            </td>
-                          </tr>
-                          {% endfor %}
-                      </tbody>
-                      </table>
+
+        </div>
+        <div class="card-footer">
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card  card-tasks">
+        <div class="card-header ">
+          <h5 class="card-category">Backend development</h5>
+          <h4 class="card-title">Tasks</h4>
+        </div>
+        <div class="card-body ">
+          <div class="table-full-width table-responsive">
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <span class="form-check-sign"></span>
+                      </label>
                     </div>
-                    {% for assignment in request.user.student_data.member_of.assignments.current_and_future %}
-                    <!-- Modal -->
-<div class="modal fade" id="{{ assignment.course.course.code }}-{{ assignment.pk }}" tabindex="-1" role="dialog" aria-labelledby="{{ assignment.course.course.code }}" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">{{ assignment.course.course.code }} Assignment</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+                  </td>
+                  <td class="text-left">Sign contract for "What are conference organizers afraid of?"</td>
+                  <td class="td-actions text-right">
+                    <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
+                      <i class="now-ui-icons ui-2_settings-90"></i>
+                    </button>
+                    <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
+                      <i class="now-ui-icons ui-1_simple-remove"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox">
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </td>
+                  <td class="text-left">Lines From Great Russian Literature? Or E-mails From My Boss?</td>
+                  <td class="td-actions text-right">
+                    <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
+                      <i class="now-ui-icons ui-2_settings-90"></i>
+                    </button>
+                    <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
+                      <i class="now-ui-icons ui-1_simple-remove"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="form-check">
+                      <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" checked>
+                        <span class="form-check-sign"></span>
+                      </label>
+                    </div>
+                  </td>
+                  <td class="text-left">Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
+                  </td>
+                  <td class="td-actions text-right">
+                    <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
+                      <i class="now-ui-icons ui-2_settings-90"></i>
+                    </button>
+                    <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
+                      <i class="now-ui-icons ui-1_simple-remove"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card-footer ">
+          <hr>
+          <div class="stats">
+            <i class="now-ui-icons loader_refresh spin"></i> Updated 3 minutes ago
+          </div>
+        </div>
       </div>
-      <div class="modal-body">
-        {{ assignment.questions | safe }}
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">view on page</button>
+    </div>
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-category">All Persons List</h5>
+          <h4 class="card-title"> Employees Stats</h4>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table">
+              <thead class=" text-primary">
+                <th>
+                  Name
+                </th>
+                <th>
+                  Country
+                </th>
+                <th>
+                  City
+                </th>
+                <th class="text-right">
+                  Salary
+                </th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    Dakota Rice
+                  </td>
+                  <td>
+                    Niger
+                  </td>
+                  <td>
+                    Oud-Turnhout
+                  </td>
+                  <td class="text-right">
+                    $36,738
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Minerva Hooper
+                  </td>
+                  <td>
+                    Curaçao
+                  </td>
+                  <td>
+                    Sinaai-Waas
+                  </td>
+                  <td class="text-right">
+                    $23,789
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Sage Rodriguez
+                  </td>
+                  <td>
+                    Netherlands
+                  </td>
+                  <td>
+                    Baileux
+                  </td>
+                  <td class="text-right">
+                    $56,142
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Doris Greene
+                  </td>
+                  <td>
+                    Malawi
+                  </td>
+                  <td>
+                    Feldkirchen in Kärnten
+                  </td>
+                  <td class="text-right">
+                    $63,542
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    Mason Porter
+                  </td>
+                  <td>
+                    Chile
+                  </td>
+                  <td>
+                    Gloucester
+                  </td>
+                  <td class="text-right">
+                    $78,615
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
-                    {% endfor %}
-                    {% else %}
-                    <h5>No assignments yet.</h5>
-                    {% endif %}
-
-
-              </div>
-              <div class="card-footer">
-
-              </div>
-            </div>
-          </div>
+{% else %}
+<div class="container">
+  <div class="row">
+    <div class="col-3"></div>
+    <div class="col-12">
+      <div class="card  card-tasks">
+        <div class="card-header ">
+          <h4 class="card-title">Welcome {{ request.user.first_name }}!</h4>
         </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="card  card-tasks">
-              <div class="card-header ">
-                <h5 class="card-category">Backend development</h5>
-                <h4 class="card-title">Tasks</h4>
-              </div>
-              <div class="card-body ">
-                <div class="table-full-width table-responsive">
-                  <table class="table">
-                    <tbody>
-                      <tr>
-                        <td>
-                          <div class="form-check">
-                            <label class="form-check-label">
-                              <input class="form-check-input" type="checkbox" checked>
-                              <span class="form-check-sign"></span>
-                            </label>
-                          </div>
-                        </td>
-                        <td class="text-left">Sign contract for "What are conference organizers afraid of?"</td>
-                        <td class="td-actions text-right">
-                          <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
-                            <i class="now-ui-icons ui-2_settings-90"></i>
-                          </button>
-                          <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
-                            <i class="now-ui-icons ui-1_simple-remove"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="form-check">
-                            <label class="form-check-label">
-                              <input class="form-check-input" type="checkbox">
-                              <span class="form-check-sign"></span>
-                            </label>
-                          </div>
-                        </td>
-                        <td class="text-left">Lines From Great Russian Literature? Or E-mails From My Boss?</td>
-                        <td class="td-actions text-right">
-                          <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
-                            <i class="now-ui-icons ui-2_settings-90"></i>
-                          </button>
-                          <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
-                            <i class="now-ui-icons ui-1_simple-remove"></i>
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          <div class="form-check">
-                            <label class="form-check-label">
-                              <input class="form-check-input" type="checkbox" checked>
-                              <span class="form-check-sign"></span>
-                            </label>
-                          </div>
-                        </td>
-                        <td class="text-left">Flooded: One year later, assessing what was lost and what was found when a ravaging rain swept through metro Detroit
-                        </td>
-                        <td class="td-actions text-right">
-                          <button type="button" rel="tooltip" title="" class="btn btn-info btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Edit Task">
-                            <i class="now-ui-icons ui-2_settings-90"></i>
-                          </button>
-                          <button type="button" rel="tooltip" title="" class="btn btn-danger btn-round btn-icon btn-icon-mini btn-neutral" data-original-title="Remove">
-                            <i class="now-ui-icons ui-1_simple-remove"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+        <div class="card-body ">
+          <h5>You're currently not a member of any class group. please contact your class governor
+            for the invite link or find it here.</h5>
+          <a href="#" class="btn btn-primary">Explore Classes</a>
+          <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#govdepnotice">For governors and deputies only.</a>
+
+          <!-- Modal -->
+          <div class="modal fade" id="govdepnotice" tabindex="-1" role="dialog" aria-labelledby="govdepnoticeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="govdepnoticeModalLabel">Notice to class governors and deputies.</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
-              </div>
-              <div class="card-footer ">
-                <hr>
-                <div class="stats">
-                  <i class="now-ui-icons loader_refresh spin"></i> Updated 3 minutes ago
+                <div class="modal-body">
+                  <ul>
+                    <li>Welcome onboard. {{ site_info.name }} requires all <b class="text-danger">class governors and
+                        deputies</b> to identify their respective ranks in order to enable administrative rights.</li>
+                    <li><b class="text-danger">Only the class governor</b> is authorized to create a class group for his/her
+                      class after which his/her rank has been identified, for class members <em>(deputy inclusive)</em></li>
+                  </ul>
                 </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card">
-              <div class="card-header">
-                <h5 class="card-category">All Persons List</h5>
-                <h4 class="card-title"> Employees Stats</h4>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table">
-                    <thead class=" text-primary">
-                      <th>
-                        Name
-                      </th>
-                      <th>
-                        Country
-                      </th>
-                      <th>
-                        City
-                      </th>
-                      <th class="text-right">
-                        Salary
-                      </th>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          Dakota Rice
-                        </td>
-                        <td>
-                          Niger
-                        </td>
-                        <td>
-                          Oud-Turnhout
-                        </td>
-                        <td class="text-right">
-                          $36,738
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          Minerva Hooper
-                        </td>
-                        <td>
-                          Curaçao
-                        </td>
-                        <td>
-                          Sinaai-Waas
-                        </td>
-                        <td class="text-right">
-                          $23,789
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          Sage Rodriguez
-                        </td>
-                        <td>
-                          Netherlands
-                        </td>
-                        <td>
-                          Baileux
-                        </td>
-                        <td class="text-right">
-                          $56,142
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          Doris Greene
-                        </td>
-                        <td>
-                          Malawi
-                        </td>
-                        <td>
-                          Feldkirchen in Kärnten
-                        </td>
-                        <td class="text-right">
-                          $63,542
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          Mason Porter
-                        </td>
-                        <td>
-                          Chile
-                        </td>
-                        <td>
-                          Gloucester
-                        </td>
-                        <td class="text-right">
-                          $78,615
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <div class="modal-footer">
+                  <a href="{% url 'uni:leader-authorize' %}" class="btn btn-primary">identify rank now</a>
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      {% else %}
-      <div class="container">
-        <div class="row">
-          <div class="col-3"></div>
-          <div class="col-12">
-            <div class="card  card-tasks">
-              <div class="card-header ">
-                <h4 class="card-title">Welcome {{ request.user.first_name }}!</h4>
-              </div>
-              <div class="card-body ">
-                <h5>You're currently not a member of any class group. please contact your class governor
-                for the invite link or find it here.</h5>
-                <a href="#" class="btn btn-primary">Explore Classes</a>
-                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#govdepnotice">For governors and deputies only.</a>
-
-                <!-- Modal -->
-<div class="modal fade" id="govdepnotice" tabindex="-1" role="dialog" aria-labelledby="govdepnoticeModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="govdepnoticeModalLabel">Notice to class governors and deputies.</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <ul>
-          <li>Welcome onboard. {{ site_info.name }} requires all <b class="text-danger">class governors and
-          deputies</b> to identify their respective ranks in order to enable administrative rights.</li>
-          <li><b class="text-danger">Only the class governor</b> is authorized to create a class group for his/her
-          class after which his/her rank has been identified, for class members <em>(deputy inclusive)</em></li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <a href="{% url 'uni:leader-authorize' %}" class="btn btn-primary">identify rank now</a>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <div class="card-footer ">
+          <hr>
+        </div>
       </div>
     </div>
+    <div class="col-3"></div>
   </div>
 </div>
-              </div>
-              <div class="card-footer ">
-                <hr>
-              </div>
-            </div>
-          </div>
-          <div class="col-3"></div>
-        </div>
-      </div>
-      {% endif %}
-      {% endblock content %}
+{% endif %}
+{% endblock content %}
