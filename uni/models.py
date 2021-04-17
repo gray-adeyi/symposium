@@ -145,6 +145,57 @@ class Symposium(ImageCompressMixin, models.Model):
         ordering = ['-created_on']
 
 
+class SymposiumBroadcast(models.Model):
+    """
+    Model is used by Class Governors and
+    Deputy to send broadcast message
+    that propagates to all members of a `Symposium`
+    i.e students. it expires after 24hrs
+    """
+
+    FROM_OPTIONS = (
+        ('G', 'Governor'),
+        ('D', 'Deputy Governor'),
+    )
+    symposium = models.OneToOneField(Symposium, on_delete=models.CASCADE,
+                                     related_name='broadcast')
+    message = models.CharField(max_length=220)
+    message_from = models.CharField(max_length=1, choices=FROM_OPTIONS,
+                                    default='G')
+    created_on = models.DateTimeField(auto_now_add=True)
+    archive = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # delete archived broadcasts
+        old_broadcasts = SymposiumBroadcast.objects.filter(archive=True)
+        for broadcast in old_broadcasts:
+            broadcast.delete()
+        # delete `SymposiumBroadcast` instance is archive=True
+        if self.archive:
+            self.delete()
+            return
+        super().save(*args, **kwargs)
+
+    def delete_expired(self):
+        """
+        deletes `Broadcast` instances which
+        have exceeded 24hrs from creation
+        time and archives and older `Broadcast`
+        instance.
+        """
+        broadcasts = Symposium.objects.all()
+        for broadcast in broadcasts:
+            time_diff = make_aware(dt.datetime.now()) - broadcast.created_on
+            if hasattr(time_diff, 'days'):
+                if time_diff.days > 1:
+                    broadcast.archive = True
+                    broadcast.save()
+        return True
+
+    def __str__(self):
+        return str(self.symposium)
+
+
 class OfferedCourse(models.Model):
     symposium = models.ForeignKey(Symposium, on_delete=models.CASCADE,
                                   related_name='courses')

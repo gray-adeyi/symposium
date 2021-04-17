@@ -15,7 +15,8 @@
 
 -->
 {% extends 'uni/dash_base.html' %}
-
+{% load static %}
+{% block title %}{{ request.user.first_name}}'s Profile{% endblock %}
 {% block content %}
 <div class="content">
   <div class="row">
@@ -326,12 +327,12 @@
     <div class="col-md-4">
       <div class="card card-user">
         <div class="image">
-          <img src="../assets/img/bg5.jpg" alt="...">
+          <img src="{% static 'uni/images/bg5.svg' %}" alt="...">
         </div>
         <div class="card-body">
           <div class="author">
             <a href="#">
-              <img class="avatar border-gray" src="../assets/img/mike.jpg" alt="...">
+              <img class="avatar border-gray" src="{% if request.user.student_data.profile_picture %}{{ request.user.student_data.profile_picture.url }}{% else %}{% static 'uni/images/better_avatar.svg' %}{% endif %}" alt="...">
               <h5 class="title">{{ request.user.first_name }} {{ request.user.last_name }}</h5>
             </a>
             <p class="description">

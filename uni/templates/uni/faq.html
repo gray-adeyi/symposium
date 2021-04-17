@@ -1,0 +1,58 @@
+<!--
+
+=========================================================
+* Now UI Dashboard - v1.5.0
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/now-ui-dashboard
+* Copyright 2019 Creative Tim (http://www.creative-tim.com)
+
+* Designed by www.invisionapp.com Coded by www.creative-tim.com
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+-->
+{% extends 'uni/dash_base.html' %}
+{% block title %}Frequently Asked Questions (FAQs){% endblock title %}
+{% block content %}
+<div class="content">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card ">
+        <div class="card-header ">
+          <h3>Frequently Asked Questions(FAQs)</h3>
+        </div>
+        <div class="card-body ">
+          {% if faqs %}
+          <div id="accordion" role="tablist" aria-multiselectable="true" class="card-collapse">
+            {% for faq in faqs %}
+            <div class="card card-plain">
+              <div class="card-header" role="tab" id="faq-tab-{{ forloop.counter }}">
+                <h5>
+                  <a data-toggle="collapse" data-parent="#accordion" href="#faq-{{ forloop.counter }}" aria-expanded="true" aria-controls="collapseOne">
+                    {{ faq.question }} #{{ forloop.counter }}
+
+                    <i class="now-ui-icons arrows-1_minimal-down"></i>
+                  </a>
+                </h5>
+              </div>
+
+              <div id="faq-{{ forloop.counter }}" class="collapse {% if forloop.counter == 1 %}show{% endif %}" role="tabpanel" aria-labelledby="headingOne">
+                <div class="card-body">
+                  {{ faq.answer }}
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <h5>No FAQs yet.</h5>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

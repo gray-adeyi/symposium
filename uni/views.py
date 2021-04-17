@@ -21,7 +21,7 @@ USER = get_user_model()
 
 
 class GTemplate(generic.TemplateView):
-    template_name = "uni/notifications.html"
+    template_name = "uni/tables.html"
 
 
 class Register(View):
