@@ -191,11 +191,11 @@
       setTimeout(1000, nowuiDashboard.showNotification(
         'top',
         'left',
-        '{% if message.tags == '
-        error ' %}danger{% else %}{{ message.tags }}{% endif %}',
+        "{% if message.tags == 'error ' %}danger{% else %}{{ message.tags }}{% endif %}",
         "now-ui-icons travel_info",
         '{{ message }}')); {
-        % endfor %
+        %
+        endfor %
       }
     });
   </script>
