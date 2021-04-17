@@ -5,8 +5,8 @@ adapted for higher institutions.
 
 ## Features
 1. Personalized student dashboards.
-2. Payment options.
-3. Timetable and lecture updates.
+2. Timetable and lecture updates.
+3. Support for mathematical and chemical equations using [katex](https://katex.org/) and [mhchem](https://mhchem.github.io/MathJax-mhchem/)
 
 ## Setting it up.
 Note: it is required that you have some level
