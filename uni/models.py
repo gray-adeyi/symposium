@@ -36,13 +36,15 @@ class ImageCompressMixin:
         Compresses the image of the
         field specified
         """
-        compressed = self._compress_img(img=field)
-        field.save(
-            field.name,
-            ContentFile(compressed.read()),
-            save=False,
-        )
-        compressed.close()
+        if bool(field):  # Used bool to test if the field is None,
+            # field is None doesn't yield expected result.
+            compressed = self._compress_img(img=field)
+            field.save(
+                field.name,
+                ContentFile(compressed.read()),
+                save=False,
+                )
+            compressed.close()
 
 
 class Faculty(models.Model):
