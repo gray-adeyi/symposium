@@ -105,7 +105,7 @@ class Course(ImageCompressMixin, models.Model):
     def __str__(self):
         return self.code
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.compress_img(self.poster_image)
         super().save()
 
@@ -139,7 +139,7 @@ class Symposium(ImageCompressMixin, models.Model):
     def __str__(self):
         return self.name
 
-    def save(self):
+    def save(self, *args, **kwargs):
         self.compress_img(self.poster_image)
         super().save()
 
