@@ -164,15 +164,6 @@ class PasswordReset(View):
             return self.get(request)
 
 
-class ActivateAccount(generic.TemplateView):
-    """
-    Responsible for activating users's accounts
-    by ensuring that the email they supplied on
-    registration acctually exists.
-    """
-    template_name = "uni/activate.html"
-
-
 class Dashboard(generic.View):
     """
     Renders user dashboard based on the
