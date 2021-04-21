@@ -69,7 +69,7 @@ class Activate(View):
         student_data.is_activated = True
         student_data.save()
         messages.success(request, "Your account has been activated.")
-        return HttpResponseRedirect(reverse('uni:dashboard'))
+        return HttpResponseRedirect(reverse('uni:login'))
 
 
 class Login(View):
@@ -112,19 +112,56 @@ def logout_view(request):
     return HttpResponseRedirect(reverse('uni:login'))
 
 
-class SendPasswordReset(generic.TemplateView):
+class SendPasswordReset(View):
     """
     View helps accept email to which the reset
     password page is sent.
     """
-    template_name = 'uni/send_reset.html'
+    def __init__(self, *args, **kwargs):
+        self.template_name = 'uni/send_reset.html'
+        self.ctx = {
+            'form': forms.SendPasswordResetForm()
+        }
+
+    def get(self, request):
+        return render(request, self.template_name, self.ctx)
+
+    def post(self, request):
+        send_password_reset = forms.SendPasswordResetForm(request.POST)
+        if send_password_reset.is_valid():
+            send_password_reset.send_mail()
+            messages.success(request, f"A password reset link has been sent \
+                to {send_password_reset.clean_data.get('email')}")
+            return HttpResponseRedirect(reverse('uni:send-reset-link'))
+        else:
+            messages.error(request, f"{send_password_reset.errors}")
+            self.ctx['form'] = send_password_reset
+            return self.get(request)
 
 
-class PasswordReset(generic.TemplateView):
+class PasswordReset(View):
     """
     Responsible for updating user's password_validation
     """
-    template_name = 'uni/reset.html'
+    def __init__(self, *args, **kwargs):
+        self.template_name = 'uni/reset.html'
+        self.ctx = {
+            'form': forms.PasswordResetForm(),
+        }
+
+    def get(self, request):
+        return render(request, self.template_name, self.ctx)
+
+    def post(self, request):
+        password_reset = forms.PasswordResetForm(request.POST)
+        if(password_reset.is_valid()):
+            password_reset.update_user_password(request)
+            messages.success(request, "Password successfully updated!")
+            return HttpResponseRedirect(reverse('uni:login'))
+        else:
+            messages.error(request, "An error occured")
+            self.ctx['form'] = password_reset
+            return self.get(request)
 
 
 class ActivateAccount(generic.TemplateView):

@@ -1,5 +1,6 @@
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+import secrets
 from django.contrib.auth import (
     get_user_model,
     authenticate,)
@@ -391,3 +392,123 @@ class StudentForm(forms.ModelForm):
             'signature',
             'state_of_origin',
         ]
+
+
+class SendPasswordResetForm(forms.Form):
+
+    email = forms.EmailField()
+
+    def clean(self):
+        super().clean()
+        self.validate_email()
+
+    def validate_email(self):
+        """
+        Ensures that the user with that email
+        exists before sending a reset link to
+        to the user.
+        """
+        email = self.cleaned_data.get('email')
+        try:
+            USER.objects.get(email=email)
+        except USER.DoesNotExist:
+            self.add_error('email', 'A user with the supplied email \
+                does not exist.')
+        except Exception as e:
+            logger.error(str(e))
+
+    def send_mail(self):
+        # first update the old `Student.link` value with a new one.
+
+        user = USER.objects.get(email=self.cleaned_data.get('email'))
+        user.student_data.link = secrets.token_urlsafe(32)
+        link = user.student_data.save().link
+        link = reverse('uni:reset', kwargs={'link': link})  # TODO: add hot
+        # before the link
+        logger.info(f"Sending password reset link to \
+        {self.cleaned_data['email']}")
+
+        message = f"""
+        Dear {user['first_name']},
+        Here's the link to reset your password. {link}
+
+        Best Regards
+        Gbenga@symposium
+        [Notice: Ignore this email if you did not just attempt a
+        password reset]
+        """
+
+        mail = MIMEMultipart()
+        mail['From'] = 'admin@symposium.com'
+        mail['To'] = self.cleaned_data['email']
+        mail['Subject'] = "[Symposium] Password Reset"
+        msg = MIMEText(message, 'plain')
+        mail.attach(msg)
+
+        send_mail(
+            "[Symposium] Password Reset",
+            mail.as_string(),
+            "admin@symposium.com",
+            [f"{self.cleaned_data['email']}"],
+            fail_silently=False,
+            )
+
+
+class PasswordResetForm(forms.Form):
+    SPECIAL_CHARS = "~!@#$%^&*-_+=?"
+    NUMS = '1234567890'
+
+    new_password = forms.CharField(max_length=50)
+    confirm_password = forms.CharField(max_length=50)
+
+    def clean(self):
+        super().clean()
+        self.validate_password()
+
+    def validate_password(self):
+        """
+        Method checks to see if the passwords meet
+        the folllowing constraints.
+        1. length >= 8
+        2. contains a special character
+        3. contains a number.
+        4. `new_password` matches `confirm_password`.
+        """
+        passwd = self.cleaned_data.get('new_password')
+        cfrm_passwd = self.cleaned_data.get('confirm_password')
+        if(cfrm_passwd != passwd):
+            self.add_error('confirm_password', forms.ValidationError(
+                "Password mismatch. please try again."))
+        contains_number = False
+        contains_special_char = False
+        if len(passwd) < 8:
+            self.add_error('password', forms.ValidationError(
+                    "Password length should be greater or equal to eight"
+            ))
+
+        for char in passwd:  # Test to see if number or special characters
+            # are in the password
+            if char in self.SPECIAL_CHARS:
+                contains_special_char = True
+            if char in self.NUMS:
+                contains_number = True
+
+        if not contains_number:
+            self.add_error('password', forms.ValidationError(
+                    "Password does not contain a number. \
+                    please add at least one"
+            ))
+
+        if not contains_special_char:
+            self.add_error('password', forms.ValidationError(
+                    "Password does not contain a special character. \
+                    please add at least one from `~!@#$%^&*-_+=?`"
+            ))
+
+    def update_user_password(self, request):
+        if(not request.user.is_anonymous):
+            password = self.cleaned_data.get('confirm_password')
+            if(password != '' or password is not None):
+                request.user.set_password(password)
+                logger.info(f"Updated the password of user: \
+                    {request.user.username}")

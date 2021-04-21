@@ -117,7 +117,7 @@
                   </div>
                   <div class="pull-right">
                     <h6>
-                      {% if request.get_full_path == '/login/' %}
+                      {% if request.get_full_path == '/login/' or request.get_full_path == '/' %}
                       <a href="{% url 'uni:reset-link' %}" class="link">Forgot Password?</a>
                       {% elif request.get_full_path == '/send-reset-link/' or request.get_full_path == '/reset/' %}
                       <a href="{% url 'uni:login' %}" class="link">Return to login</a>
@@ -191,11 +191,11 @@
       setTimeout(1000, nowuiDashboard.showNotification(
         'top',
         'left',
-        '{% if message.tags == '
-        error ' %}danger{% else %}{{ message.tags }}{% endif %}',
+        "{% if message.tags == 'error ' %}danger{% else %}{{ message.tags }}{% endif %}",
         "now-ui-icons travel_info",
         '{{ message }}')); {
-        % endfor %
+        %
+        endfor %
       }
     });
   </script>

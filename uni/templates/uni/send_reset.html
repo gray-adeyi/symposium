@@ -1,17 +1,16 @@
 {% extends 'uni/form_base.html' %}
 {% block title %}Password Reset{% endblock title %}
 
-
+{% block form_method %}post{% endblock form_method %}
 {% block form_fields %}
-
-
 <div class="input-group no-border input-lg">
   <div class="input-group-prepend">
     <span class="input-group-text">
       <i class="now-ui-icons users_circle-08"></i>
     </span>
   </div>
-  <input type="email" class="form-control" placeholder="Email">
+  <input type="email" class="form-control" placeholder="Email" name="email" value="{%if form.email.value is not None %}{{ form.email.value }}{% endif %}">
+  <p style="color:red;">{{ form.email.errors }}</p>
 </div>
 
 {% endblock form_fields %}
