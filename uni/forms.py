@@ -422,14 +422,15 @@ class SendPasswordResetForm(forms.Form):
 
         user = USER.objects.get(email=self.cleaned_data.get('email'))
         user.student_data.link = secrets.token_urlsafe(32)
-        link = user.student_data.save().link
+        user.student_data.save()
+        link = user.student_data.link
         link = reverse('uni:reset', kwargs={'link': link})  # TODO: add hot
         # before the link
         logger.info(f"Sending password reset link to \
         {self.cleaned_data['email']}")
 
         message = f"""
-        Dear {user['first_name']},
+        Dear {user.first_name},
         Here's the link to reset your password. {link}
 
         Best Regards
@@ -482,7 +483,7 @@ class PasswordResetForm(forms.Form):
         contains_number = False
         contains_special_char = False
         if len(passwd) < 8:
-            self.add_error('password', forms.ValidationError(
+            self.add_error('new_password', forms.ValidationError(
                     "Password length should be greater or equal to eight"
             ))
 
@@ -494,21 +495,22 @@ class PasswordResetForm(forms.Form):
                 contains_number = True
 
         if not contains_number:
-            self.add_error('password', forms.ValidationError(
+            self.add_error('new_password', forms.ValidationError(
                     "Password does not contain a number. \
                     please add at least one"
             ))
 
         if not contains_special_char:
-            self.add_error('password', forms.ValidationError(
+            self.add_error('new_password', forms.ValidationError(
                     "Password does not contain a special character. \
                     please add at least one from `~!@#$%^&*-_+=?`"
             ))
 
-    def update_user_password(self, request):
-        if(not request.user.is_anonymous):
-            password = self.cleaned_data.get('confirm_password')
-            if(password != '' or password is not None):
-                request.user.set_password(password)
-                logger.info(f"Updated the password of user: \
-                    {request.user.username}")
+    def update_user_password(self, link):
+        user = models.Student.objects.get(link=link).basic_data
+        password = self.cleaned_data.get('confirm_password')
+        if(password != '' or password is not None):
+            user.set_password(password)
+            user.save()
+            logger.info(f"Updated the password of user: \
+                {user.username}")

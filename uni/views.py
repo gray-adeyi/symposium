@@ -95,7 +95,9 @@ class Login(View):
                 login(request, user)
                 return HttpResponseRedirect(reverse('uni:dashboard'))
             else:
-                messages.error(request, "User not found!")
+                messages.error(request, "Invalid Email/Username/Matric no/\
+                    Reg no & password combination!")
+                return HttpResponseRedirect(reverse('uni:login'))
         else:
             messages.error(request, "Unable to login user")
             self.ctx['form'] = new_login
@@ -131,8 +133,8 @@ class SendPasswordReset(View):
         if send_password_reset.is_valid():
             send_password_reset.send_mail()
             messages.success(request, f"A password reset link has been sent \
-                to {send_password_reset.clean_data.get('email')}")
-            return HttpResponseRedirect(reverse('uni:send-reset-link'))
+                to {send_password_reset.cleaned_data.get('email')}")
+            return HttpResponseRedirect(reverse('uni:reset-link'))
         else:
             messages.error(request, f"{send_password_reset.errors}")
             self.ctx['form'] = send_password_reset
@@ -149,19 +151,29 @@ class PasswordReset(View):
             'form': forms.PasswordResetForm(),
         }
 
-    def get(self, request):
-        return render(request, self.template_name, self.ctx)
+    def get(self, request, *args, **kwargs):
+        self.ctx['link'] = kwargs['link']
+        try:
+            models.Student.objects.get(link=kwargs['link'])
+            return render(request, self.template_name, self.ctx)
+        except models.Student.DoesNotExist:
+            messages.error("You tried accessing an invalid link")
+            return HttpResponseRedirect(reverse('uni:login'))
+        except Exception as e:
+            logger.error(str(e))
+            return HttpResponseRedirect(reverse('uni:login'))
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         password_reset = forms.PasswordResetForm(request.POST)
         if(password_reset.is_valid()):
-            password_reset.update_user_password(request)
+            password_reset.update_user_password(kwargs['link'])
             messages.success(request, "Password successfully updated!")
             return HttpResponseRedirect(reverse('uni:login'))
         else:
             messages.error(request, "An error occured")
+            logger.info("i was hit")
             self.ctx['form'] = password_reset
-            return self.get(request)
+            return self.get(request, link=kwargs['link'])
 
 
 class Dashboard(generic.View):

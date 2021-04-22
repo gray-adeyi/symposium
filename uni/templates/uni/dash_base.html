@@ -254,19 +254,14 @@
   <script src="{% static 'uni/js/auto-render-katex.js' %}" charset="utf-8"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      {
-        %
-        for message in messages %
-      }
+      {% for message in messages %}
       setTimeout(1000, nowuiDashboard.showNotification(
         'top',
         'right',
-        "{% if message.tags == 'error ' %}danger{% else %}{{ message.tags }}{% endif %}",
+        "{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %}",
         "now-ui-icons travel_info",
-        '{{ message }}')); {
-        %
-        endfor %
-      }
+        '{{ message }}'));
+        {% endfor %}
     });
   </script>
   {% block script %}{% endblock script %}
