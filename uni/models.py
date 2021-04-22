@@ -165,33 +165,11 @@ class SymposiumBroadcast(models.Model):
     message_from = models.CharField(max_length=1, choices=FROM_OPTIONS,
                                     default='G')
     created_on = models.DateTimeField(auto_now_add=True)
-    archive = models.BooleanField(default=False)
+    expire_by = models.DateTimeField(blank=True)
 
-    def save(self, *args, **kwargs):
-        # delete archived broadcasts
-        old_broadcasts = SymposiumBroadcast.objects.filter(archive=True)
-        for broadcast in old_broadcasts:
-            broadcast.delete()
-        # delete `SymposiumBroadcast` instance is archive=True
-        if self.archive:
+    def remove_expired(self):
+        if(self.expire_by <= make_aware(dt.datetime.now())):
             self.delete()
-            return
-        super().save(*args, **kwargs)
-
-    def delete_expired(self):
-        """
-        deletes `Broadcast` instances which
-        have exceeded 24hrs from creation
-        time and archives and older `Broadcast`
-        instance.
-        """
-        broadcasts = Symposium.objects.all()
-        for broadcast in broadcasts:
-            time_diff = make_aware(dt.datetime.now()) - broadcast.created_on
-            if hasattr(time_diff, 'days'):
-                if time_diff.days > 1:
-                    broadcast.archive = True
-                    broadcast.save()
         return True
 
     def __str__(self):

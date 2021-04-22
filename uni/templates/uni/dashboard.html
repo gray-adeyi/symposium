@@ -28,7 +28,7 @@
           <h4 class="card-title">Timetable</h4>
         </div>
         <div class="card-body">
-          {% if request.user.student_data.member_of.timetable %}
+          {% if request.user.student_data.member_of.timetable.units.now_and_future.count >= 1 %}
           <div class="table-responsive">
             <table class="table">
               <thead class=" text-primary">
