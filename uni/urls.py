@@ -29,4 +29,6 @@ urlpatterns = [
     path('class-groups/join/<str:pk>/', views.join_symposium,
          name='join-class'),
     path('FAQs/', views.FAQView.as_view(), name='faqs'),
+    path('assignments/<str:pk>', views.AssignmentView.as_view(),
+         name='assignment'),
 ]

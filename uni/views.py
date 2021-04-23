@@ -338,6 +338,16 @@ class FAQView(generic.ListView):
         return models.FAQ.objects.filter(symposium=self.request.
                                          user.student_data.member_of)
 
+
+class AssignmentView(generic.DetailView):
+    template_name = "uni/assignment.html"
+    context_object_name = 'assignment'
+
+    def get_queryset(self):
+        return models.Assignment.objects.filter(
+            symposium=self.request.user.student_data.member_of,
+            pk=self.kwargs['pk'])
+
 ###################################################
 #
 #   FUNCTION BASED VIEWS
