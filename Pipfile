@@ -8,6 +8,11 @@ django = "*"
 pillow = "*"
 pytz = "*"
 flake8 = "*"
+django-heroku = "*"
+gunicorn = "*"
+boto3 = "*"
+django-storages = "*"
+psycopg2 = "*"
 
 [dev-packages]
 

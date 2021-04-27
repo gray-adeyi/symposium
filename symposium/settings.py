@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import os
 from pathlib import Path
+import django_heroku
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -76,12 +77,31 @@ WSGI_APPLICATION = 'symposium.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+else:
+    DATABASES = {
+        'default': {
+
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+
+            'NAME': os.environ['DB_DATABASE'],
+
+            'USER': os.environ['DB_USER'],
+
+            'PASSWORD': os.environ['DB_PASSWORD'],
+
+            'HOST': os.environ['DB_HOST'],
+
+            'PORT': int(os.environ['DB_PORT']),
+
+                }
+            }
 
 
 # Password validation
@@ -175,3 +195,35 @@ else:
 
 # config for autocreating primary key in models.
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# AWS S3 configurations
+AWS_LOCATION = 'static'
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
+AWS_S3_CUSTOM_DOMAIN= f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_OBJECT_PARAMETERS = {
+     'CacheControl': 'max-age=86400',
+}
+AWS_DEFAULT_ACL = None
+
+
+if DEBUG:
+    STATIC_URL= '/static/'
+    MEDIA_URL = '/assets/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+else:
+    STATIC_URL=f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
+    ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
+
+    DEFAULT_FILE_STORAGE = 'microvision.storage_backends.MediaStorage'
+    STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+    STATICFILES_FINDERS = (
+        'django.contrib.staticfiles.finders.FileSystemFinder',
+        'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    )
+
+# Activate Django-Heroku.
+django_heroku.settings(locals())
