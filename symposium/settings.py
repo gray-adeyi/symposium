@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'symposium.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if DEBUG:
+if not DEBUG:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -181,7 +181,7 @@ LOGGING = {
 }
 
 # Email configs
-if DEBUG:
+if not DEBUG:
     EMAIL_BACKEND = (
         'django.core.mail.backends.console.EmailBackend'
     )
@@ -209,7 +209,7 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_DEFAULT_ACL = None
 
 
-if DEBUG:
+if not DEBUG:
     STATIC_URL = '/static/'
     MEDIA_URL = '/assets/'
     MEDIA_ROOT = BASE_DIR / 'media'
