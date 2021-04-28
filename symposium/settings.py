@@ -191,7 +191,7 @@ else:
     EMAIL_HOST = os.environ['EMAIL_HOST']
     EMAIL_PORT = os.environ['EMAIL_PORT']
     EMAIL_USE_TLS = True
-    EMAIL_HOST_PASSWORD = 'password'
+    EMAIL_HOST_PASSWORD = os.environ['EMAIL_PASSWORD']
 
 
 # config for autocreating primary key in models.
