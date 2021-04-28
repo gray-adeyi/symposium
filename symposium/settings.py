@@ -181,7 +181,7 @@ LOGGING = {
 }
 
 # Email configs
-if not DEBUG:
+if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST_USER = 'username'
     EMAIL_HOST = 'smpt.domain.com'
@@ -201,7 +201,7 @@ AWS_LOCATION = 'static'
 AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
 AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
 AWS_STORAGE_BUCKET_NAME = os.environ['AWS_STORAGE_BUCKET_NAME']
-AWS_S3_CUSTOM_DOMAIN= f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_CUSTOM_DOMAIN=f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
 AWS_S3_OBJECT_PARAMETERS = {
      'CacheControl': 'max-age=86400',
 }
@@ -209,7 +209,7 @@ AWS_DEFAULT_ACL = None
 
 
 if DEBUG:
-    STATIC_URL= '/static/'
+    STATIC_URL='/static/'
     MEDIA_URL = '/assets/'
     MEDIA_ROOT = BASE_DIR / 'media'
 else:
@@ -217,7 +217,7 @@ else:
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/'
     ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
-    DEFAULT_FILE_STORAGE = 'microvision.storage_backends.MediaStorage'
+    DEFAULT_FILE_STORAGE = 'symposium.storage_backends.MediaStorage'
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
     STATICFILES_FINDERS = (
