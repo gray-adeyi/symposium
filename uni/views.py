@@ -49,7 +49,7 @@ class Register(View):
             )
             user.set_password(new_user.cleaned_data['password'])
             user.save()
-            new_user.send_mail(user)
+            new_user.send_mail(request, user)
             messages.success(request, "Your accout was successfully set up, \
                             please activate your accout via the email we just\
                             sent to you.")
@@ -131,7 +131,7 @@ class SendPasswordReset(View):
     def post(self, request):
         send_password_reset = forms.SendPasswordResetForm(request.POST)
         if send_password_reset.is_valid():
-            send_password_reset.send_mail()
+            send_password_reset.send_mail(request)
             messages.success(request, f"A password reset link has been sent \
                 to {send_password_reset.cleaned_data.get('email')}")
             return HttpResponseRedirect(reverse('uni:reset-link'))

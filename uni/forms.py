@@ -114,10 +114,10 @@ class RegisterForm(forms.Form):
                              'Email is already attached to an existing \
                              account.')
 
-    def send_mail(self, usr_obj):
+    def send_mail(self, request, usr_obj):
         link = self.create_student_data(usr_obj)
-        link = reverse('uni:activate', kwargs={'link': link})  # TODO: add hot
-        # before the link
+        link = "https://" + request.get_host() + reverse('uni:activate',
+                                                         kwargs={'link': link})
         logger.info(f"Sending accout activation link to \
         {self.cleaned_data['email']}")
 
@@ -417,15 +417,15 @@ class SendPasswordResetForm(forms.Form):
         except Exception as e:
             logger.error(str(e))
 
-    def send_mail(self):
+    def send_mail(self, request):
         # first update the old `Student.link` value with a new one.
 
         user = USER.objects.get(email=self.cleaned_data.get('email'))
         user.student_data.link = secrets.token_urlsafe(32)
         user.student_data.save()
         link = user.student_data.link
-        link = reverse('uni:reset', kwargs={'link': link})  # TODO: add hot
-        # before the link
+        link = "https://" + request.get_host() + reverse('uni:reset',
+                                                         kwargs={'link': link})
         logger.info(f"Sending password reset link to \
         {self.cleaned_data['email']}")
 
