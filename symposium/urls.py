@@ -17,6 +17,10 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+import main.views
+
+handler404 = main.views.handler404
+handler500 = main.views.handler500
 
 urlpatterns = [
     path('admin/', admin.site.urls),

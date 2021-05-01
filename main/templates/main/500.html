@@ -1,0 +1,11 @@
+{% extends 'main/error-base.html' %}
+{% load static %}
+{% block title %}A 500 error just occured{% endblock title %}
+{% block error-img %}{% static 'main/500.png' %}{% endblock error-img %}
+{% block content %}
+<h3>An internal server error occurred.</h3>
+We're sorry you had to see this page. The fault was from our end, and, we're currently working on our end to make
+things better. If this page reoccurs you can go ahead to report this to our team <a href="{% url 'main:about' %}" class="btn btn-primary">Here</a><br>
+You can also go ahead to login to your account <a href="{% url 'uni:login' %}" class="btn btn-primary">Here</a><br>Or find out
+more about us <a href="{% url 'main:about' %}" class="btn btn-primary">Here</a>
+{% endblock content %}

@@ -1,0 +1,9 @@
+{% extends 'main/error-base.html' %}
+{% load static %}
+{% block title %}A 404 error just occured{% endblock title %}
+{% block error-img %}{% static 'main/404.png' %}{% endblock error-img %}
+{% block content %}
+<h3>The page you requested was not found.</h3>
+You can go ahead to login to your account <a href="{% url 'uni:login' %}" class="btn btn-primary">Here</a><br>Or find out
+more about us <a href="{% url 'main:about' %}" class="btn btn-primary">Here</a>
+{% endblock content %}
