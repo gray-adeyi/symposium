@@ -142,7 +142,7 @@ class RegisterForm(forms.Form):
         send_mail(
             "[Symposium] Activate account",
             mail.as_string(),
-            "admin@symposium.com",
+            "folarinolawale3415@gmail.com",
             [f"{self.cleaned_data['email']}"],
             fail_silently=False,
             )
@@ -449,7 +449,7 @@ class SendPasswordResetForm(forms.Form):
         send_mail(
             "[Symposium] Password Reset",
             mail.as_string(),
-            "admin@symposium.com",
+            "folarinolawale3415@gmail.com",
             [f"{self.cleaned_data['email']}"],
             fail_silently=False,
             )
