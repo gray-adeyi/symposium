@@ -19,6 +19,7 @@ class ImageCompressMixin:
     Mixin to compress models
     `ImageField`
     """
+
     def _compress_img(self, img, quality=20, format='JPEG'):
         """
         Function helps in the reduction of image
@@ -43,7 +44,7 @@ class ImageCompressMixin:
                 field.name,
                 ContentFile(compressed.read()),
                 save=False,
-                )
+            )
             compressed.close()
 
 

@@ -30,33 +30,34 @@ STUDENT_DATA_1 = {
     'matric_no': '1905004590'
 }
 
+
 class TestForms(TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(email=USER_DATA_1[
-                                                'email'],
-                                            username=USER_DATA_1['username'],
-                                            first_name=USER_DATA_1[
-                                                'first_name'],
-                                            last_name=USER_DATA_1['last_name'])
+            'email'],
+            username=USER_DATA_1['username'],
+            first_name=USER_DATA_1[
+            'first_name'],
+            last_name=USER_DATA_1['last_name'])
         self.user.set_password(USER_DATA_1['password'])
         self.user.save()
         self.student = models.Student.objects.create(basic_data=self.user,
                                                      reg_no=STUDENT_DATA_1[
-                                                        'reg_no'],
+                                                         'reg_no'],
                                                      matric_no=STUDENT_DATA_1[
-                                                        'matric_no'])
+                                                         'matric_no'])
 
     def test_register_form(self):
         form = forms.RegisterForm(USER_DATA_2)
         self.assertTrue(form.is_valid())
         user = get_user_model().objects.create_user(email=form.cleaned_data[
-                                                'email'],
-                                            username=form.cleaned_data[
-                                                'username'],
-                                            first_name=form.cleaned_data[
-                                                'first_name'],
-                                            last_name=form.cleaned_data[
-                                                'last_name'])
+            'email'],
+            username=form.cleaned_data[
+            'username'],
+            first_name=form.cleaned_data[
+            'first_name'],
+            last_name=form.cleaned_data[
+            'last_name'])
         user.set_password(form.cleaned_data['password'])
         user.save()
 

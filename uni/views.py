@@ -14,7 +14,7 @@ from main.models import SiteInfo
 from . import (
     forms,
     models,
-    )
+)
 
 logger = logging.getLogger(__name__)
 USER = get_user_model()
@@ -28,6 +28,7 @@ class Register(View):
     """
     handles student sign up
     """
+
     def __init__(self, *args, **kwargs):
         super(Register, self).__init__(*args, **kwargs)
         self.template_name = 'uni/register.html'
@@ -42,10 +43,10 @@ class Register(View):
         new_user = forms.RegisterForm(request.POST)
         if new_user.is_valid():
             user = USER.objects.create_user(
-                    email=new_user.cleaned_data['email'],
-                    username=new_user.cleaned_data['username'],
-                    first_name=new_user.cleaned_data['first_name'],
-                    last_name=new_user.cleaned_data['last_name'],
+                email=new_user.cleaned_data['email'],
+                username=new_user.cleaned_data['username'],
+                first_name=new_user.cleaned_data['first_name'],
+                last_name=new_user.cleaned_data['last_name'],
             )
             user.set_password(new_user.cleaned_data['password'])
             user.save()
@@ -77,6 +78,7 @@ class Login(View):
     serves the login page of the
     application
     """
+
     def __init__(self, *args, **kwargs):
         super(Login, self).__init__(*args, **kwargs)
         self.template_name = 'uni/login.html'
@@ -119,6 +121,7 @@ class SendPasswordReset(View):
     View helps accept email to which the reset
     password page is sent.
     """
+
     def __init__(self, *args, **kwargs):
         self.template_name = 'uni/send_reset.html'
         self.ctx = {
@@ -145,6 +148,7 @@ class PasswordReset(View):
     """
     Responsible for updating user's password_validation
     """
+
     def __init__(self, *args, **kwargs):
         self.template_name = 'uni/reset.html'
         self.ctx = {
@@ -181,6 +185,7 @@ class Dashboard(generic.View):
     Renders user dashboard based on the
     supplied data.
     """
+
     def __init__(self, *args, **kwargs):
         self.template_name = "uni/dashboard.html"
         self.ctx = {
@@ -202,6 +207,7 @@ class Profile(generic.View):
     Holds logic for the user
     profile page.
     """
+
     def __init__(self, user_form=None, number_form=None, *args, **kwargs):
         self.template_name = "uni/profile.html"
         self.ctx = {
@@ -259,6 +265,7 @@ class LeaderAuthorization(generic.View):
     in the future and class leaders will
     have to contact the site admin directly.
     """
+
     def __init__(self, *args, **kwargs):
         self.template_name = "uni/authorize.html"
         self.ctx = {'form': forms.LeaderForm()}
@@ -385,10 +392,10 @@ def add_phone_number(request):
         new_number = forms.PhoneNumberForm(request.POST)
         if new_number.is_valid():
             number = models.StudentPhoneNumber(
-                                               student=request.user.
-                                               student_data,
-                                               number=new_number.
-                                               cleaned_data.get('number'))
+                student=request.user.
+                student_data,
+                number=new_number.
+                cleaned_data.get('number'))
             number.save()
             return HttpResponseRedirect(reverse('uni:profile'))
         else:

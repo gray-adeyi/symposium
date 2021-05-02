@@ -31,7 +31,7 @@ class RegisterForm(forms.Form):
         cf_passwd = cleaned_data.get('confirm_password', None)
         if passwd != cf_passwd:
             self.add_error('password', forms.ValidationError(
-                    "Passwords mismatch"))
+                "Passwords mismatch"))
         self.validate_password()
         self.validate_username()
         self.validate_email()
@@ -73,7 +73,7 @@ class RegisterForm(forms.Form):
         contains_special_char = False
         if len(passwd) < 8:
             self.add_error('password', forms.ValidationError(
-                    "Password length should be greater or equal to eight"
+                "Password length should be greater or equal to eight"
             ))
 
         for char in passwd:  # Test to see if number or special characters
@@ -85,13 +85,13 @@ class RegisterForm(forms.Form):
 
         if not contains_number:
             self.add_error('password', forms.ValidationError(
-                    "Password does not contain a number. \
+                "Password does not contain a number. \
                     please add at least one"
             ))
 
         if not contains_special_char:
             self.add_error('password', forms.ValidationError(
-                    "Password does not contain a special character. \
+                "Password does not contain a special character. \
                     please add at least one from `~!@#$%^&*-_+=?`"
             ))
 
@@ -132,7 +132,7 @@ class RegisterForm(forms.Form):
         an account]
         """
 
-        mail = MIMEMultipart()
+        mail = MIMEMultipart('plain')
         mail['From'] = 'admin@symposium.com'
         mail['To'] = self.cleaned_data['email']
         mail['Subject'] = "[Symposium] Activate account"
@@ -145,7 +145,7 @@ class RegisterForm(forms.Form):
             "folarinolawale3415@gmail.com",
             [f"{self.cleaned_data['email']}"],
             fail_silently=False,
-            )
+        )
 
     def create_student_data(self, usr_obj):
         """
@@ -166,7 +166,7 @@ class LoginForm(forms.Form):
         'two': 'username',
         'three': 'matric_no',
         'four': 'reg_no',
-        }
+    }
 
     multi_field = forms.CharField(max_length=50)
     password = forms.CharField(max_length=50)
@@ -439,7 +439,7 @@ class SendPasswordResetForm(forms.Form):
         password reset]
         """
 
-        mail = MIMEMultipart()
+        mail = MIMEMultipart('plain')
         mail['From'] = 'admin@symposium.com'
         mail['To'] = self.cleaned_data['email']
         mail['Subject'] = "[Symposium] Password Reset"
@@ -452,7 +452,7 @@ class SendPasswordResetForm(forms.Form):
             "folarinolawale3415@gmail.com",
             [f"{self.cleaned_data['email']}"],
             fail_silently=False,
-            )
+        )
 
 
 class PasswordResetForm(forms.Form):
@@ -484,7 +484,7 @@ class PasswordResetForm(forms.Form):
         contains_special_char = False
         if len(passwd) < 8:
             self.add_error('new_password', forms.ValidationError(
-                    "Password length should be greater or equal to eight"
+                "Password length should be greater or equal to eight"
             ))
 
         for char in passwd:  # Test to see if number or special characters
@@ -496,13 +496,13 @@ class PasswordResetForm(forms.Form):
 
         if not contains_number:
             self.add_error('new_password', forms.ValidationError(
-                    "Password does not contain a number. \
+                "Password does not contain a number. \
                     please add at least one"
             ))
 
         if not contains_special_char:
             self.add_error('new_password', forms.ValidationError(
-                    "Password does not contain a special character. \
+                "Password does not contain a special character. \
                     please add at least one from `~!@#$%^&*-_+=?`"
             ))
 

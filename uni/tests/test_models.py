@@ -23,15 +23,15 @@ def set_up_test_data():
     faculty = models.Faculty.objects.create(name='engineering',
                                             about='lorem ipsum')
     basic_data = get_user_model().objects.create(username=USER_DATA[
-                                                    'username'],
-                                                 first_name=USER_DATA[
-                                                    'first_name'],
-                                                 last_name=USER_DATA[
-                                                    'last_name'],
-                                                 email=USER_DATA[
-                                                    'email'],
-                                                 password=USER_DATA[
-                                                    'password'])
+        'username'],
+        first_name=USER_DATA[
+        'first_name'],
+        last_name=USER_DATA[
+        'last_name'],
+        email=USER_DATA[
+        'email'],
+        password=USER_DATA[
+        'password'])
     hod = models.Lecturer.objects.create(basic_data=basic_data)
     department = models.Department.objects.create(faculty=faculty,
                                                   name='electrical \
@@ -44,9 +44,9 @@ def set_up_test_data():
                                           code="MAT-101",
                                           name="Algebraic mathematics",
                                           poster_image=SimpleUploadedFile(
-                                                    name='test_image.jpg',
-                                                    content=IMAGE_CONTENT,
-                                                    content_type='image/jpeg')
+                                              name='test_image.jpg',
+                                              content=IMAGE_CONTENT,
+                                              content_type='image/jpeg')
                                           )
     symposium = models.Symposium.objects.create(department=department,
                                                 name='Test Class Group',
@@ -54,27 +54,27 @@ def set_up_test_data():
                                                 about="An awesome test class \
                                                     group.",
                                                 poster_image=SimpleUploadedFile(
-                                                          name='test_image.jpg',
-                                                          content=IMAGE_CONTENT,
-                                                          content_type='image/jpeg')
+                                                    name='test_image.jpg',
+                                                    content=IMAGE_CONTENT,
+                                                    content_type='image/jpeg')
                                                 )
     symposium_broadcast = models.SymposiumBroadcast.objects.create(
-                                                        symposium=symposium,
-                                                        message='hello ami!',
-                                                        message_from='G'
-                                                        )
+        symposium=symposium,
+        message='hello ami!',
+        message_from='G'
+    )
 
     offered_course = models.OfferedCourse.objects.create(
-                                                         symposium=symposium,
-                                                         course=course,
-                                                         unit=3
-                                                         )
+        symposium=symposium,
+        course=course,
+        unit=3
+    )
 
     assignment = models.Assignment.objects.create(
-            symposium=symposium,
-            course=offered_course,
-            questions="What do you love?",
-            submission_date=make_aware(dt.datetime.now() + dt.timedelta(days=1))
+        symposium=symposium,
+        course=offered_course,
+        questions="What do you love?",
+        submission_date=make_aware(dt.datetime.now() + dt.timedelta(days=1))
 
     )
     time_table = models.Timetable.objects.create(
@@ -147,16 +147,16 @@ class TestLecturerModel(ModelTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         user = get_user_model().objects.create_user(
-                                                    username=USER_DATA[
-                                                        'username'],
-                                                    first_name=USER_DATA[
-                                                        'first_name'],
-                                                    last_name=USER_DATA[
-                                                        'last_name'],
-                                                    email=USER_DATA[
-                                                        'email'],
-                                                    password=USER_DATA[
-                                                        'password'])
+            username=USER_DATA[
+                'username'],
+            first_name=USER_DATA[
+                'first_name'],
+            last_name=USER_DATA[
+                'last_name'],
+            email=USER_DATA[
+                'email'],
+            password=USER_DATA[
+                'password'])
         models.Lecturer.objects.create(basic_data=user)
 
     def test_labels(self):
