@@ -2,3 +2,5 @@
 db.sqlite3
 *.zsh
 media/
+.vscode
+staticfiles
