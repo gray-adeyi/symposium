@@ -7,6 +7,7 @@ import logging
 from io import BytesIO
 from PIL import Image
 from django.core.files.base import ContentFile
+from django.utils.text import slugify
 
 # default user model.
 USER = get_user_model()
@@ -131,6 +132,7 @@ class Symposium(ImageCompressMixin, models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE,
                                    related_name='classes')
     name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(blank=True)
     level = models.CharField(max_length=3, choices=LEVEL_OPTIONS)
     about = models.TextField(blank=True)
     poster_image = models.ImageField(blank=True)
@@ -142,6 +144,7 @@ class Symposium(ImageCompressMixin, models.Model):
 
     def save(self, *args, **kwargs):
         self.compress_img(self.poster_image)
+        self.slug = slugify(self.name)
         super().save()
 
     class Meta:
@@ -209,7 +212,7 @@ class Assignment(models.Model):
     objects = AssignmentManager()
 
     symposium = models.ForeignKey(Symposium, on_delete=models.CASCADE,
-                                  related_name='assignments')
+                                  related_name='assignments', blank=True)
     course = models.ForeignKey(OfferedCourse, on_delete=models.CASCADE,
                                related_name='assignments')
     questions = models.TextField()
@@ -255,9 +258,9 @@ class TimetableUnit(models.Model):
         ('P', 'Practical'),
     )
     timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE,
-                                  related_name='units')
+                                  related_name='units', blank=True)
     course = models.ForeignKey(OfferedCourse, on_delete=models.CASCADE,
-                               related_name='timetable')
+                               related_name='timetable', blank=True)
     unit_type = models.CharField(max_length=1, choices=TYPE_OPTIONS)
     date_time = models.DateTimeField()
     duration = models.DurationField(blank=True)

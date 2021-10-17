@@ -75,6 +75,31 @@
           <h5>No timetable yet.</h5>
           {% endif %}
         </div>
+        {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
+        <div class="card-footer">
+          <button class="btn btn-secondary" data-toggle="modal" data-target="#toggle-add-timetable-entry">Add timetable entry</button>
+          <!-- Modal -->
+          <div class="modal fade" id="toggle-add-timetable-entry" tabindex="-1" role="dialog" aria-labelledby="govdepnoticeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="govdepnoticeModalLabel">Add timetable entry</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {{ timetable_form.as_p }}
+                  <a href="#" class="btn btn-primary">Upload</a>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
       </div>
     </div>
     <div class="col-md-4 col-sm-12">
@@ -149,9 +174,31 @@
 
 
         </div>
+        {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
         <div class="card-footer">
-
+          <button class="btn btn-secondary" data-toggle="modal" data-target="#toggle-add-new-assignment">Add new assignment</button>
+          <!-- Modal -->
+          <div class="modal fade" id="toggle-add-new-assignment" tabindex="-1" role="dialog" aria-labelledby="govdepnoticeModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="add-new-assignment">Add new assignment</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  {{ assignment_form.as_p }}
+                  <a href="#" class="btn btn-primary">Upload</a>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -159,7 +206,7 @@
     <div class="col-md-6">
       <div class="card  card-tasks">
         <div class="card-header ">
-          <h5 class="card-category">Backend development</h5>
+          <h5 class="card-category">Ads</h5>
           <h4 class="card-title">Tasks</h4>
         </div>
         <div class="card-body ">
@@ -236,11 +283,12 @@
         </div>
       </div>
     </div>
+    {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
     <div class="col-md-6">
       <div class="card">
         <div class="card-header">
-          <h5 class="card-category">All Persons List</h5>
-          <h4 class="card-title"> Employees Stats</h4>
+          <h5 class="card-category">All Members List</h5>
+          <h4 class="card-title"> {{ request.user.student_data.member_of }} members list</h4>
         </div>
         <div class="card-body">
           <div class="table-responsive">
@@ -250,13 +298,13 @@
                   Name
                 </th>
                 <th>
-                  Country
+                  Matric No
                 </th>
                 <th>
-                  City
+                  Phone no
                 </th>
                 <th class="text-right">
-                  Salary
+                  Action
                 </th>
               </thead>
               <tbody>
@@ -336,6 +384,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
   </div>
 </div>
 {% else %}

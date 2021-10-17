@@ -5,6 +5,7 @@ from django.contrib.auth import (
     get_user_model,
     authenticate,)
 from django.core.mail import send_mail
+from django.db.models import fields
 from django.urls import reverse
 from django import forms
 import logging
@@ -115,9 +116,14 @@ class RegisterForm(forms.Form):
                              account.')
 
     def send_mail(self, request, usr_obj):
-        link = self.create_student_data(usr_obj)
+        """
+        Note: your required to call the
+        `self.create_student_data` method to
+        initialize the self.link variable used
+        to send mails
+        """
         link = "https://" + request.get_host() + reverse('uni:activate',
-                                                         kwargs={'link': link})
+                                                         kwargs={'link': self.link})
         logger.info(f"Sending accout activation link to \
         {self.cleaned_data['email']}")
 
@@ -157,7 +163,7 @@ class RegisterForm(forms.Form):
         student_data = models.Student.objects.create(
             basic_data=usr_obj,
         )
-        return student_data.link
+        self.link = student_data.link
 
 
 class LoginForm(forms.Form):
@@ -514,3 +520,26 @@ class PasswordResetForm(forms.Form):
             user.save()
             logger.info(f"Updated the password of user: \
                 {user.username}")
+
+
+class TimetableUnitForm(forms.ModelForm):
+    class Meta:
+        model = models.TimetableUnit
+        fields = [
+            'course',
+            'unit_type',
+            'date_time',
+            'duration',
+            'timetable',
+        ]
+
+
+class AssignmentForm(forms.ModelForm):
+    class Meta:
+        model = models.Assignment
+        fields = [
+            'symposium',
+            'course',
+            'questions',
+            'submission_date'
+        ]

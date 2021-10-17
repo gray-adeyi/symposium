@@ -14,6 +14,8 @@ urlpatterns = [
     path('reset/<slug:link>/', views.PasswordReset.as_view(), name='reset'),
     path('class-heads/authorize/',
          views.LeaderAuthorization.as_view(), name='leader-authorize'),
+    path('class/<slug:name>/', views.ClassPage.as_view(),
+         name='class-index'),
     path('class/create/', views.CreateSymposium.as_view(),
          name='create-class'),
     path('dashboard/', views.Dashboard.as_view(), name='dashboard'),

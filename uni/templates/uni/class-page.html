@@ -25,7 +25,7 @@
   <link rel="icon" type="image/png" href="{% if site_info.favicon %}{{ site_info.favicon.url }}{% endif %}">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <title>
-    {{ site_info.name }}
+    Welcome to {{ class_data.name }}
   </title>
   <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
   <!--     Fonts and icons     -->
@@ -63,7 +63,7 @@
       </div>
       <div class="navbar-translate">
         <a class="navbar-brand" href="{% url 'main:about' %}" rel="tooltip" title="About {{ site_info.name }}" data-placement="bottom">
-          {{ site_info.name }}
+          {{ class_data.name }} Group page
         </a>
         <button class="navbar-toggler navbar-toggler" type="button" data-toggle="collapse" data-target="#navigation" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-bar top-bar"></span>
@@ -79,6 +79,15 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'uni:login' %}">Login</a>
           </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'uni:dashboard' %}">Return to dashboard</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'uni:join-class' pk=class_data.pk %}">Join</a>
+          </li>
+          {% endif %}
           <li class="nav-item">
             <a class="nav-link" href="{{ site_info.source_code_link }}" target="_blank">Source code <i class="fab fa-github"></i></a>
           </li>
@@ -101,9 +110,8 @@
       </div>
       <div class="content-center">
         <div class="container">
-          <h1 class="title">symposium /sɪmˈpəʊzɪəm/</h1>
+          <h1 class="title">Welcome to {{ class_data.name }}</h1>
           <div class="text-center">
-            <h3>1. a conference or meeting to discuss a particular subject.</h3>
             {% for account in site_info.social_accounts.all %}
             <a href="{{ account.link }}" target="_blank" class="btn btn-primary btn-icon btn-round">
               <i class="fab fa-{{ account.account }}"></i>
@@ -118,14 +126,14 @@
         <div class="row">
           <div class="col-md-8 ml-auto mr-auto text-center">
             <h2 class="title">Who we are?</h2>
-            <h5 class="description">According to the National Oceanic and Atmospheric Administration, Ted, Scambos, NSIDClead scentist, puts the potentially record low maximum sea ice extent tihs year down to low ice extent in the Pacific and a late drop in ice extent in the Barents Sea.</h5>
+            <h5 class="description">{{ class_data.about }}</h5>
           </div>
         </div>
         <div class="separator separator-primary"></div>
         <div class="section-story-overview">
           <div class="row">
             <div class="col-md-6">
-              <div class="image-container image-left" style="background-image: url('../assets/img/login.jpg')">
+              <div class="image-container image-left" style="background-image: url({% static 'main/assets/img/login.jpg' %})">
                 <!-- First image on the left side -->
                 <p class="blockquote blockquote-primary">"Over the span of the satellite record, Arctic sea ice has been declining significantly, while sea ice in the Antarctichas increased very slightly"
                   <br>
@@ -198,33 +206,10 @@
     </div>
     <div class="section section-contact-us text-center">
       <div class="container">
-        <h2 class="title">Want to work with us?</h2>
+        <h2 class="title">Social accounts</h2>
         <p class="description">Your project is very important to us.</p>
         <div class="row">
-          <div class="col-lg-6 text-center col-md-8 ml-auto mr-auto">
-            <div class="input-group input-lg">
-              <div class="input-group-prepend">
-                <span class="input-group-text">
-                  <i class="now-ui-icons users_circle-08"></i>
-                </span>
-              </div>
-              <input type="text" class="form-control" placeholder="First Name...">
-            </div>
-            <div class="input-group input-lg">
-              <div class="input-group-prepend">
-                <span class="input-group-text">
-                  <i class="now-ui-icons ui-1_email-85"></i>
-                </span>
-              </div>
-              <input type="text" class="form-control" placeholder="Email...">
-            </div>
-            <div class="textarea-container">
-              <textarea class="form-control" name="name" rows="4" cols="80" placeholder="Type a message..."></textarea>
-            </div>
-            <div class="send-button">
-              <a href="#pablo" class="btn btn-primary btn-round btn-block btn-lg">Send Message</a>
-            </div>
-          </div>
+            <div class="col-3"><a href="#pablo" class="btn btn-primary btn-round btn-block btn-lg">Join whatsapp group</a></div>
         </div>
       </div>
     </div>

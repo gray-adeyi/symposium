@@ -8,8 +8,11 @@ from django.contrib.auth import (
     login,
     logout,)
 from django.views import generic
+from django.conf import settings
 from django.views import View
 import logging
+
+from django.views.generic.base import TemplateView
 from main.models import SiteInfo
 from . import (
     forms,
@@ -50,10 +53,20 @@ class Register(View):
             )
             user.set_password(new_user.cleaned_data['password'])
             user.save()
-            new_user.send_mail(request, user)
-            messages.success(request, "Your accout was successfully set up, \
+            new_user.create_student_data(user)
+            if settings.EMAIL_INTEGRATION:
+                new_user.send_mail(request, user)
+                messages.success(request, "Your account has been successfully set up, \
                             please activate your accout via the email we just\
                             sent to you.")
+            else:
+                student_data = models.Student.objects.get(link=new_user.link)
+                student_data.is_activated = True
+                student_data.save()
+                messages.success(
+                    request, 'Your account has been successfully set up')
+                messages.warning(request, "Please note that your account has been activated\
+                    without email verification. The fault is from us and we're working on it")
             return HttpResponseRedirect(reverse('uni:login'))
         else:
             self.ctx['form'] = new_user
@@ -129,6 +142,10 @@ class SendPasswordReset(View):
         }
 
     def get(self, request):
+        if not settings.EMAIL_INTEGRATION:
+            messages.warning("We're sorry our email feature is currently down\
+                you won't be able to get a recovery link. please \
+                    contact coyotedevmail@gmail.com for support")
         return render(request, self.template_name, self.ctx)
 
     def post(self, request):
@@ -180,6 +197,18 @@ class PasswordReset(View):
             return self.get(request, link=kwargs['link'])
 
 
+class ClassPage(TemplateView):
+    """
+    A symposium page for public view.
+    """
+    template_name = 'uni/class-page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['class_data'] = models.Symposium.objects.get(slug=self.kwargs['name'])
+        return context
+
+
 class Dashboard(generic.View):
     """
     Renders user dashboard based on the
@@ -190,7 +219,9 @@ class Dashboard(generic.View):
         self.template_name = "uni/dashboard.html"
         self.ctx = {
             'site_info': SiteInfo.objects.filter().first(),
-            'date': datetime.date.today()
+            'date': datetime.date.today(),
+            'timetable_form': forms.TimetableUnitForm(),
+            'assignment_form': forms.AssignmentForm(),
         }
 
     def get(self, request):
@@ -439,3 +470,16 @@ def join_symposium(request, pk):
         messages.error(request, f"Can't join a class group until you're \
         logged in")
         return HttpResponseRedirect(reverse('uni:expore-classes'))
+
+
+def add_time_table(request):
+    if request.user.is_authenticated and request.method == 'POST':
+        time_table, _ = models.Timetable.objects.get_or_create(
+            symposium=request.user.student_data.member_of)
+        time_table_unit = forms.TimetableUnitForm(request.POST)
+        if time_table_unit.is_valid():
+            time_table_unit.cleaned_data['timetable'] = time_table
+            time_table_unit.save()
+            messages.success(request, 'Timetable unit has been successfully added')
+        else:
+            messages.error(request, 'An error occured!')

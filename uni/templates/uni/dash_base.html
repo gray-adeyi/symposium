@@ -48,8 +48,8 @@
         <a href="{% url 'main:about' %}" class="simple-text logo-mini" title="about {{ site_info.name }}">
           <i class="fa fa-school"></i>
         </a>
-        <a href="http://www.creative-tim.com" class="simple-text logo-normal">
-          {{ request.user.first_name }} {{ request.user.last_name }}
+        <a href="{% url 'uni:class-index' name=request.user.student_data.member_of.slug %}" class="simple-text logo-normal">
+          Class Page
         </a>
       </div>
       <div class="sidebar-wrapper" id="sidebar-wrapper">
@@ -81,13 +81,37 @@
           </li>
           {% endif %}
           <li>
-            <a href="./notifications.html">
+            <a href="">
               <i class="now-ui-icons ui-1_bell-53"></i>
-              <p>Archives</p>
+              <p>Market place</p>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="now-ui-icons ui-1_bell-53"></i>
+              <p>News Hub</p>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="now-ui-icons ui-1_bell-53"></i>
+              <p>Forums</p>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="now-ui-icons ui-1_bell-53"></i>
+              <p>Resourses & Archives</p>
+            </a>
+          </li>
+          <li>
+            <a href="">
+              <i class="now-ui-icons ui-1_bell-53"></i>
+              <p>Payments</p>
             </a>
           </li>
           <li class="active-pro">
-            <a href="./upgrade.html">
+            <a href="">
               <i class="now-ui-icons ui-1_settings-gear-63"></i>
               <p>Settings</p>
             </a>
@@ -181,8 +205,10 @@
           </div>
         </div>
       </div>
-      <div class="panel-header panel-header-lg mb-5">
+      <div class="panel-header panel-header-sm mb-5">
         <div class="container">
+          <div class="row">
+          </div>
           <div class="row">
             {% if request.user.student_data.member_of.broadcast.remove_expired %}
             <div class="card">

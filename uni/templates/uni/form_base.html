@@ -54,6 +54,9 @@
           <a class="dropdown-item" href="#">Contributors</a>
           <a class="dropdown-item" href="{% url 'uni:register' %}">Sign up</a>
           <a class="dropdown-item" href="{% url 'uni:login' %}">Login</a>
+          {% if request.user.is_authenticated %}
+          <a class="dropdown-item" href="{% url 'uni:dashboard' %}">Return to dashboard</a>
+          {% endif %}
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#">Donate</a>
         </div>
@@ -73,6 +76,11 @@
           <li class="nav-item">
             <a class="nav-link" href="{{ site_info.source_code_link }}" target="_blank">Source code <i class="fab fa-github"></i></a>
           </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'uni:dashboard' %}">Return to dashboard </a>
+          </li>
+          {% endif %}
           {% for account in site_info.social_accounts.all %}
           <li class="nav-item">
             <a class="nav-link" rel="tooltip" title="Join us on {{ account.get_account_display }}" data-placement="bottom" href="{{ account.link }}" target="_blank">
@@ -99,6 +107,9 @@
                   <div class="logo-container">
                     <img src="{% static 'uni/images/logo.svg' %}" alt="">
                   </div>
+                  {% if request.user.is_authenticated %}
+                  <p>You're still logged in. <a href="{% url 'uni:dashboard' %}" class="btn btn-secondary">Return to dashboard</a></p>
+                  {% endif %}
                 </div>
                 <div class="card-body">
                   {% csrf_token %}
