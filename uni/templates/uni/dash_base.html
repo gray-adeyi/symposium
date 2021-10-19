@@ -48,7 +48,7 @@
         <a href="{% url 'main:about' %}" class="simple-text logo-mini" title="about {{ site_info.name }}">
           <i class="fa fa-school"></i>
         </a>
-        <a href="{% url 'uni:class-index' name=request.user.student_data.member_of.slug %}" class="simple-text logo-normal">
+        <a href="{% if request.user.member_of is not None %}{% url 'uni:class-index' name=request.user.student_data.member_of.slug %}{% endif %}" class="simple-text logo-normal">
           Class Page
         </a>
       </div>
