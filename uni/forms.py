@@ -538,7 +538,6 @@ class AssignmentForm(forms.ModelForm):
     class Meta:
         model = models.Assignment
         fields = [
-            'symposium',
             'course',
             'questions',
             'submission_date'

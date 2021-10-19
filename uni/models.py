@@ -212,7 +212,7 @@ class Assignment(models.Model):
     objects = AssignmentManager()
 
     symposium = models.ForeignKey(Symposium, on_delete=models.CASCADE,
-                                  related_name='assignments', blank=True)
+                                  related_name='assignments', blank=True, null=True)
     course = models.ForeignKey(OfferedCourse, on_delete=models.CASCADE,
                                related_name='assignments')
     questions = models.TextField()

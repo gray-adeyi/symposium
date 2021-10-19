@@ -500,3 +500,25 @@ def delete_timetable(request, pk):
     else:
         messages.error(request, 'An error occured, try again')
         return redirect('uni:dashboard')
+
+def add_assignment(request):
+    if request.user.is_authenticated and request.method == 'POST':
+        assignment = forms.AssignmentForm(request.POST)
+        if assignment.is_valid():
+            new_assignment = assignment.save()
+            new_assignment.symposium = request.user.student_data.member_of
+            new_assignment.save()
+            messages.success(request, 'Assignment successfully uploaded')
+            return redirect('uni:dashboard')
+        else:
+            messages.error(request, 'An error occured while trying to upload assignment')
+            logger.error(assignment.errors)
+            return redirect('uni:dashboard')
+
+def remove_assignment(request, pk):
+    if request.user.is_authenticated:
+        models.Assignment.objects.get(symposium= request.user.student_data.member_of, pk=pk).delete()
+        messages.success(request, 'Assignment was successfully removed')
+        return redirect('uni:dashboard')
+    else:
+        return redirect('uni:dasboard')

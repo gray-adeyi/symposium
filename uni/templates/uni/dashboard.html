@@ -140,7 +140,7 @@
         {% endif %}
       </div>
     </div>
-    <div class="col-md-4 col-sm-12">
+    <div class="col-md-6 col-sm-12">
       <div class="card card-chart">
         <div class="card-header">
           <h5 class="card-category"></h5>
@@ -177,7 +177,10 @@
                     <i class="now-ui-icons ui-2_time-alarm"></i> {{ assignment.submission_date |date:"F j, Y" }} @ {{ assignment.submission_date |date:"fa" }}
                   </td>
                   <td class="text-right">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ assignment.course.course.code }}-{{ assignment.pk }}">view</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ assignment.course.course.code }}-{{ assignment.pk }}">View</button>
+                    {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
+                    <a href="{% url 'uni:remove-assignment' pk=assignment.pk %}" class="btn ml-1 btn-danger">Remove</a>
+                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
@@ -226,8 +229,29 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  {{ assignment_form.as_p }}
-                  <a href="#" class="btn btn-primary">Upload</a>
+                  <form action="{% url 'uni:add-assignment' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="course">Course</label>
+                      <select class="form-control" id="course" name="course">
+                        {% for x, y in assignment_form.fields.course.choices %}
+                        <option value="{{ x }}" {% if assignment_form.fields.course.value == x %} selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="">Questions</label>
+                      <textarea name="questions" id="" cols="10" rows="10" class="form-control"></textarea>
+                      <p class="text-muted">LaTex is supported. (eg. \frac{a}{b} = $\frac{a}{b}$)</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="submission date">Submission Date & Time</label>
+                      <input type="datetime" name="submission_date" id="submission-date" class="form-control">
+                      <p class="text-muted">[ yyyy-mm-dd hh-mm-ss](eg. 2021-10-21 09:0:0 for a submission on the 21st of October, 2021 at 9am)</p>
+                    </div>
+
+                  <button type="submit" class="btn btn-primary">Upload</button>
+                  </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

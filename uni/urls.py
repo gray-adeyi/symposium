@@ -37,4 +37,8 @@ urlpatterns = [
          name='add-timetable'),
     path('timetable/remove/<str:pk>', views.delete_timetable,
          name='delete-timetable'),
+    path('assignment/add/', views.add_assignment,
+         name='add-assignment'),
+    path('assignment/remove/<str:pk>', views.remove_assignment,
+         name='remove-assignment'),
 ]
