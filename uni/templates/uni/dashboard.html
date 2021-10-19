@@ -47,6 +47,11 @@
                 <th class="text-right">
                   Duration
                 </th>
+                {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
+                <th class="text-right">
+                  Action
+                </th>
+                {% endif %}
               </thead>
               <tbody>
                 {% for unit in request.user.student_data.member_of.timetable.units.now_and_future %}
@@ -66,6 +71,11 @@
                   <td class="text-right">
                     {{ unit.duration | duration }}
                   </td>
+                  {% if request.user.student_data.is_governor or request.user.student_data.is_deputy %}
+                  <td class="text-right">
+                    <a href="{% url 'uni:delete-timetable' pk=unit.pk %}" class="btn btn-danger">Remove</a>
+                  </td>
+                  {% endif %}
                 </tr>
                 {% endfor %}
               </tbody>
@@ -89,8 +99,36 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  {{ timetable_form.as_p }}
-                  <a href="#" class="btn btn-primary">Upload</a>
+                  <form action="{% url 'uni:add-timetable' %}" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="rank">Course</label>
+                      <select class="form-control" id="course" name="course">
+                        {% for x, y in timetable_form.fields.course.choices %}
+                        <option value="{{ x }}" {% if timetable_form.fields.course.value == x %} selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="rank">Unit Type</label>
+                      <select class="form-control" id="unit_type" name="unit_type">
+                        {% for x, y in timetable_form.fields.unit_type.choices %}
+                        <option value="{{ x }}" {% if timetable_form.fields.unit_type.value == x %} selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="">Date & Time</label>
+                      <input type="datetime" class="form-control" name="date_time" placeholder="Date & time" {% if timetable_form.date_time.value is not None %}value="{{ timetable_form.date_time.value }}"{% endif %}>
+                      <p class="text-muted"> [ yyyy-mm-dd hh-mm-ss](eg. 2021-10-21 09:0:0 for a 9am lecture)</p>
+                    </div>
+                    <div class="form-group">
+                      <label for="">Duration</label>
+                      <input type="datetime" class="form-control" name="duration" placeholder="duration" {% if timetable_form.duration.value is not None %}value="{{ timetable_form.duration.value }}"{% endif %}>
+                      <p class="text-muted">How long a lecture will last [ hh-mm-ss ](eg. 02:0:0 for a 2 hours lecture)</p>
+                    </div>
+                  <button type="submit" class="btn btn-primary">Upload</button>
+                  </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

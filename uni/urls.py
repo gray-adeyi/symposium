@@ -33,4 +33,8 @@ urlpatterns = [
     path('FAQs/', views.FAQView.as_view(), name='faqs'),
     path('assignments/<str:pk>', views.AssignmentView.as_view(),
          name='assignment'),
+    path('timetable/add/', views.add_timetable,
+         name='add-timetable'),
+    path('timetable/remove/<str:pk>', views.delete_timetable,
+         name='delete-timetable'),
 ]

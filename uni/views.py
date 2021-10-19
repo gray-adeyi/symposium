@@ -1,5 +1,5 @@
 import datetime
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.contrib import messages
@@ -472,14 +472,31 @@ def join_symposium(request, pk):
         return HttpResponseRedirect(reverse('uni:expore-classes'))
 
 
-def add_time_table(request):
+def add_timetable(request):
     if request.user.is_authenticated and request.method == 'POST':
-        time_table, _ = models.Timetable.objects.get_or_create(
+        timetable, _ = models.Timetable.objects.get_or_create(
             symposium=request.user.student_data.member_of)
-        time_table_unit = forms.TimetableUnitForm(request.POST)
-        if time_table_unit.is_valid():
-            time_table_unit.cleaned_data['timetable'] = time_table
-            time_table_unit.save()
+        timetable_unit = forms.TimetableUnitForm(request.POST)
+        if timetable_unit.is_valid():
+            new_timetable = timetable_unit.save()
+            new_timetable.timetable = timetable
+            new_timetable.save()
             messages.success(request, 'Timetable unit has been successfully added')
+            return redirect('uni:dashboard')
         else:
             messages.error(request, 'An error occured!')
+            logger.error(timetable_unit.errors)
+            return redirect('uni:dashboard')
+    else:
+        messages.error(request, 'An error occured, try again')
+
+def delete_timetable(request, pk):
+    if request.user.is_authenticated:
+        timetable, _ = models.Timetable.objects.get_or_create(
+            symposium=request.user.student_data.member_of)
+        models.TimetableUnit.objects.get(timetable=timetable, pk=pk).delete()
+        messages.success(request, 'Timetable unit has been successfully removed')
+        return redirect('uni:dashboard')
+    else:
+        messages.error(request, 'An error occured, try again')
+        return redirect('uni:dashboard')

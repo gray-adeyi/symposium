@@ -258,7 +258,7 @@ class TimetableUnit(models.Model):
         ('P', 'Practical'),
     )
     timetable = models.ForeignKey(Timetable, on_delete=models.CASCADE,
-                                  related_name='units', blank=True)
+                                  related_name='units', blank=True, null=True)
     course = models.ForeignKey(OfferedCourse, on_delete=models.CASCADE,
                                related_name='timetable', blank=True)
     unit_type = models.CharField(max_length=1, choices=TYPE_OPTIONS)
